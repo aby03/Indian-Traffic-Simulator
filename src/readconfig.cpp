@@ -24,12 +24,35 @@ string trim(string& str){
 int main(){
 	string line;
 	ifstream myfile ("./config/config.ini");
+	string curr = "";
 	if (myfile.is_open()){
 		while ( getline(myfile, line) ){
 			line = removeComment(line);
 			line = trim(line);
 			if (line != ""){
-				cout << line << endl;
+				if (line.front() == '[' && line.back() == ']'){
+					curr = line;
+				}
+				else{
+					if (curr == "[Road]"){
+						// Storing road parameters
+						cout << "Road: " << line << endl;
+					}
+					else if (curr == "[Default]"){
+						// Storing default parameters
+						cout << "Default: " << line << endl;
+					}
+					else if (curr == "[Vehicles]"){
+						// Storing vehicle parameters
+						cout << "Vehicles: " << line << endl;
+					}
+					else if (curr == "[Simulation]"){
+						// Running simulation
+						cout << "Simulation: " << line << endl;
+					}
+					else{cout << "No headers given yet" << endl;}
+				}
+
 			}
 		}
 		myfile.close();
