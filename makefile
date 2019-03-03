@@ -12,12 +12,18 @@ SDIR = ./src
 _OBJ = simulator.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-all: $(EDIR)/simulator 
+all: $(EDIR)/simulator $(EDIR)/readconfig
 
 $(ODIR)/%.o: $(SDIR)/%.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(EDIR)/simulator: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS)
+
+$(ODIR)/readconfig.o: $(SDIR)/readconfig.cpp
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+$(EDIR)/readconfig: $(ODIR)/readconfig.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 .PHONY: clean
