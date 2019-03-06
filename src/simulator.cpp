@@ -1,7 +1,11 @@
 #include <vector>
 #include <iostream>
+#include <stdlib.h>     /* rand */
 
 using namespace std;
+
+#define DEFAULT_LENGTH 10
+#define DEFAULT_WIDTH 4
 
 struct coords{
 	int x;
@@ -44,6 +48,19 @@ public:
 		c_acc.y=0;
 		stopping_dis=0;
 	}
+	Vehicle(int speed, int acc){
+		int max_speed = speed;
+		int max_acc = acc;
+		c_speed.x=0;
+		c_speed.y=0;
+	}
+
+	void setDefault(int speed, int acc){
+		int max_speed = speed;
+		int max_acc = acc;
+		c_speed.x=0;
+		c_speed.y=0;
+	}
 
 	void run(){
 		// Modify Dynamic variables
@@ -64,6 +81,15 @@ public:
 		}
 		// Decide new acceleration
 		c_acc.x = max_acc;
+	}
+
+	void print(){
+		cout << "Vehicle: " << type << endl;
+		cout << "ID: " << id << endl;
+		cout << "Size: " << size.x << "," << size.y << endl;
+		cout << "Location: " << location.x << "," << location.y << endl;
+		cout << "Current speed: " << c_speed.x << "," << c_speed.y << endl;
+		cout << "----------------------------" << endl;
 	}
 };
 
@@ -110,6 +136,9 @@ public:
 	vector<vector<char> > map;					// Array to display vehicles on road
 
 	// Constructor
+	Road(){
+		Road(0,DEFAULT_WIDTH,DEFAULT_LENGTH);
+	}
 	Road(int i, int w, int l){
 		id = i;
 		length = l;
@@ -122,6 +151,28 @@ public:
 			}
 		}
 	}
+
+	void setWidth(int w){
+		width = w;
+				map.resize(width);
+		for (int i=0; i<width; i++){
+			map[i].resize(length);
+			for (int j=0; j<length; j++){
+				map[i][j] = ' ';
+			}
+		}
+	}
+
+	void setLength(int l){
+		length = l;
+		map.resize(width);
+		for (int i=0; i<width; i++){
+			map[i].resize(length);
+			for (int j=0; j<length; j++){
+				map[i][j] = ' ';
+			}
+		}
+	} 
 
 	// Functions
 	void display(){
@@ -160,9 +211,14 @@ public:
 		for (int i=0; i<traf_signal_list.size(); i++){
 			traf_signal_list[i].run();
 		}
+		update_map();
+		// print_cars();
 	}
 
 	void spawn_vehicle(Vehicle veh){
+		srand (time(NULL));
+		veh.location.x = -1;
+		veh.location.y = rand()%(width-veh.size.y) + 1;
 		vehicles_list.push_back(veh);
 	}
 
@@ -171,11 +227,13 @@ public:
 	}
 
 	void update_map(){
+
 		for (int i=0; i<width; i++){
 			for (int j=0; j<length; j++){
 				map[i][j] = ' ';
 			}
 		}
+
 		// Open - Close Traffic Signal
 		for (int i=0; i<traf_signal_list.size(); i++){
 			if (traf_signal_list[i].status == 'r'){
@@ -185,6 +243,7 @@ public:
 					}
 				}
 			}else{
+
 				for (int j=0; j<width; j++){
 					if (map[j][traf_signal_list[i].pos] == '|'){
 						map[j][traf_signal_list[i].pos] = ' ';
@@ -192,7 +251,6 @@ public:
 				}
 			}
 		} // Open - Close Traffic Signal
-
 		// Update Vehicles
 		for (int i=0; i<vehicles_list.size(); i++){
 			for (int j=0; j<vehicles_list[i].size.y; j++){
@@ -207,31 +265,37 @@ public:
 		}
 	}
 
+	void print_cars(){
+		for (int i = 0; i < vehicles_list.size(); i++){
+			vehicles_list[i].print();
+		}
+	}
+
 };
 
-int main(){
-	// Define Road
-	Road road1(0, 4, 10);			// id, width, length
-	// Add Signal to road
-	Signal traf1;
-	traf1.pos = 5;
-	road1.spawn_signal(traf1);
-	// Add Car
-	Vehicle car1;
-	car1.size.x = 2;
-	car1.size.y = 2;
-	car1.location.x = -1;
-	car1.location.y = 1;
-	car1.type = 'c';
-	road1.spawn_vehicle(car1);
-	// Update Map
-	road1.update_map();
-	road1.display();
+// int main(){
+// 	// Define Road
+// 	Road road1(0, 4, 10);			// id, width, length
+// 	// Add Signal to road
+// 	Signal traf1;
+// 	traf1.pos = 5;
+// 	road1.spawn_signal(traf1);
+// 	// Add Car
+// 	Vehicle car1;
+// 	car1.size.x = 2;
+// 	car1.size.y = 2;
+// 	car1.location.x = -1;
+// 	car1.location.y = 1;
+// 	car1.type = 'c';
+// 	road1.spawn_vehicle(car1);
+// 	// Update Map
+// 	road1.update_map();
+// 	road1.display();
 
-	// Run Simulation
-	for (int i=0; i<8; i++){
-		road1.run();
-		road1.update_map();
-		road1.display();
-	}
-}
+// 	// Run Simulation
+// 	for (int i=0; i<8; i++){
+// 		road1.run();
+// 		road1.update_map();
+// 		road1.display();
+// 	}
+// }

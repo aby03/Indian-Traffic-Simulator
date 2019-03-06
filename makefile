@@ -9,21 +9,18 @@ SDIR = ./src
 # _DEPS = imgOp.h
 # DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = simulator.o
+_OBJ = readconfig.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-all: $(EDIR)/simulator $(EDIR)/readconfig
+all: $(EDIR)/readconfig $(EDIR)/simulator 
 
 $(ODIR)/%.o: $(SDIR)/%.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-$(EDIR)/simulator: $(OBJ)
+$(EDIR)/readconfig: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
-$(ODIR)/readconfig.o: $(SDIR)/readconfig.cpp
-	$(CC) -c -o $@ $< $(CFLAGS)
-
-$(EDIR)/readconfig: $(ODIR)/readconfig.o
+$(EDIR)/simulator: $(ODIR)/readconfig.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 .PHONY: clean
