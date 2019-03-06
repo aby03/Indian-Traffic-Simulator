@@ -29,7 +29,7 @@ coords operator -(coords a, coords b){
 class Vehicle{
 public:
 	// Fix Variables for an object
-	int id;
+	string id;
 	char type;
 	coords size;
 	int max_speed=1;
@@ -48,14 +48,8 @@ public:
 		c_acc.y=0;
 		stopping_dis=0;
 	}
-	Vehicle(int speed, int acc){
-		int max_speed = speed;
-		int max_acc = acc;
-		c_speed.x=0;
-		c_speed.y=0;
-	}
-
-	void setDefault(int speed, int acc){
+	Vehicle(string color, int speed, int acc){
+		id = color;
 		int max_speed = speed;
 		int max_acc = acc;
 		c_speed.x=0;

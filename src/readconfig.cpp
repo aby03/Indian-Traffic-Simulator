@@ -1,12 +1,21 @@
 #include <iostream>
 #include <fstream>
 #include <bits/stdc++.h> 
+#include <vector>
 #include "simulator.cpp"
 
 using namespace std;
 
 Road road(0,4,10);
 Signal traf1;
+
+struct vinfo{
+	char type;
+	int length = 1;
+	int width = 1;
+	int maxspeed = 1;
+	int acc = 1;
+}
 
 string removeComment(string& str){
 	if (str.find("#") != string::npos){
@@ -46,7 +55,10 @@ int main(){
 	string curr = ""; //Current header operation
 	int def_speed=1;
 	int def_acc=1;
+
 	Vehicle veh(def_speed,def_acc);
+	vector<vinfo> vlist;
+	vlist veh;
 	int flag = 0;
 	if (myfile.is_open()){
 
@@ -104,29 +116,61 @@ int main(){
 					else if (curr == "[Vehicles]"){
 						if (key == "Vehicle_Type"){
 							if (flag == 1){
-								road.spawn_vehicle(veh);
-								veh.setDefault(def_speed,def_acc);
+								vlist.push_back(veh);
+								vinfo veh;
 							}
 							veh.type = sval.front();
 							flag = 1;
 						}
 						else if (key == "Vehicle_Length"){
-							veh.size.x = stoi(sval);
+							veh.length = stoi(sval);
 						}
 						else if (key == "Vehicle_Width"){
-							veh.size.y = stoi(sval);
+							veh.width = stoi(sval);
 						}
 						else if (key == "Vehicle_MaxSpeed"){
-							veh.max_speed = stoi(sval);
+							veh.maxspeed = stoi(sval);
 						}
 						else if (key == "Vehicle_Acceleration"){
-							veh.max_acc = stoi(sval);
+							veh.acc = stoi(sval);
 						}
-
 					}
 
 					else if (curr == "[Simulation]"){
 						// Running simulation
+						if (line == "END"){
+							//TODO: run till road is clear
+							break;
+						}
+						string str1 = "";
+						string str2 = "";
+						if (line.find(" ") != string::npos){
+							str1 = line.substr(0,line.find(" "));
+							str2 = line.substr(line.find(" ")+1);
+						}
+
+						if (str1 == "Signal"){
+							if (str2 == "RED"){
+								traf1.status = 'r';
+							}
+						}
+						else if (str1 == "Pass"){
+							//TODO: run till str2 time
+						}
+
+						else{
+							for (int i = 0; i < vlist.size(); i++){
+								vlist veh = vlist[i];
+								if (veh.type == str1.front()){
+									Vehicle vehicle1(str2,veh.length,veh.width,veh.maxspeed,veh.acc);
+									break;
+								}
+							}
+							road.spawn_vehicle(vehicle1);
+							road.run();
+							road.display();
+						}
+
 					}
 					else{cout << "No headers given yet" << endl;}
 				}	
