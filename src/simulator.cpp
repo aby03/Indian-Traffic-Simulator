@@ -48,8 +48,10 @@ public:
 		c_acc.y=0;
 		stopping_dis=0;
 	}
-	Vehicle(string color, int speed, int acc){
+	Vehicle(string color, int l, int w, int speed, int acc){
 		id = color;
+		size.x = l;
+		size.y = w;
 		int max_speed = speed;
 		int max_acc = acc;
 		c_speed.x=0;

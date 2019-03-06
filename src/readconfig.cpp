@@ -15,7 +15,7 @@ struct vinfo{
 	int width = 1;
 	int maxspeed = 1;
 	int acc = 1;
-}
+};
 
 string removeComment(string& str){
 	if (str.find("#") != string::npos){
@@ -56,9 +56,8 @@ int main(){
 	int def_speed=1;
 	int def_acc=1;
 
-	Vehicle veh(def_speed,def_acc);
 	vector<vinfo> vlist;
-	vlist veh;
+	vinfo veh;
 	int flag = 0;
 	if (myfile.is_open()){
 
@@ -160,15 +159,17 @@ int main(){
 
 						else{
 							for (int i = 0; i < vlist.size(); i++){
-								vlist veh = vlist[i];
+								vinfo veh = vlist[i];
 								if (veh.type == str1.front()){
 									Vehicle vehicle1(str2,veh.length,veh.width,veh.maxspeed,veh.acc);
+									vehicle1.type = str1.front();
+									road.spawn_vehicle(vehicle1);
 									break;
 								}
 							}
-							road.spawn_vehicle(vehicle1);
 							road.run();
-							road.display();
+							// road.display();
+							road.print_cars();
 						}
 
 					}
@@ -187,12 +188,12 @@ int main(){
 	car1.type = 'c';
 	road.spawn_vehicle(car1);
 	road.update_map();
-	road.print_cars();
-	road.display();
+	// road.print_cars();
+	// road.display();
 	for (int i=0; i<20; i++){
 		road.run();
 		// road.display();
-		road.print_cars();
+		// road.print_cars();
 	}
 
 	return 0;
