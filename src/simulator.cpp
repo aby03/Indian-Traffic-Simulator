@@ -26,6 +26,31 @@ coords operator -(coords a, coords b){
 	return res;
 }
 
+class Signal{
+public:
+	Signal(){
+		time = 0;
+		change_time = 2;
+		status = 'r';
+	}
+	int id;
+	int time;						// Signal Timer
+	int change_time;		// Time after which signal changes
+	int pos;
+	char status;			// RED, GREEN
+
+	void run(){
+		time = (time + 1) % change_time;
+		if (time == 0){
+			if (status == 'r'){
+				status = 'g';
+			}else{
+				status = 'r';
+			}
+		}
+	}
+};
+
 class Vehicle{
 public:
 	// Fix Variables for an object
@@ -58,25 +83,123 @@ public:
 		c_speed.y=0;
 	}
 
-	void run(){
+	void run(vector<Vehicle> veh_list, vector<Signal> signal_list){
 		// Modify Dynamic variables
-		// Set Location
+		// Get Stopping Distance
+		cout << "Vehicle: " << id << endl;
+		stopping_dis = 0;
+		int tmp = c_speed.x - max_acc;
+		while (tmp > 0){
+			stopping_dis += tmp;
+			tmp = tmp - max_acc;
+		}
+		// Check for signal and get target_speed_signal
+		int sig_index = get_ahead_signal(signal_list);
+		int target_speed_signal = max_speed;
+		if (sig_index != -1){
+			if (signal_list[sig_index].pos <= location.x + stopping_dis + max_speed && signal_list[sig_index].status == 'r'){
+				if (signal_list[sig_index].pos - location.x > 1){
+					target_speed_signal = 1;
+					cout << "Found Signal Speeding Down" << endl;
+				}else{
+					target_speed_signal = 0;
+					cout << "Found Signal Stopping" << endl;
+				}
+			}
+		}
+
+		// Check for ahead car and get target_speed_car
+		int ahead_car_index = get_ahead_car(veh_list);
+		int target_speed_car = max_speed;
+		if (ahead_car_index != -1){
+			Vehicle ahead_car = veh_list[ahead_car_index];
+			int ahead_car_back = ahead_car.location.x - ahead_car.size.x;
+			if (ahead_car_back <= location.x + stopping_dis){
+				// Collision Inbound
+				target_speed_car = 0;
+				cout << "Colliding with: " << ahead_car.id << endl;
+			}else if (ahead_car_back > location.x + stopping_dis && ahead_car_back <= location.x + stopping_dis + max_speed + 1){
+				// Match Speed and decrease distance
+				if (ahead_car_back - location.x > 2){
+					target_speed_car = ahead_car.c_speed.x;
+					cout << "Closing gap with ahead car" << endl;
+				}else{
+					target_speed_car = ahead_car.c_speed.x;
+					cout << "Matching speed with ahead car" << endl;
+				}
+				target_speed_car = min(max_speed, target_speed_car);
+			}else{
+				// Accelerate to max speed
+				cout << "Accelerating to max speed. NOT POSSIBLE CASE" << endl;
+			}
+		}
+		
+		if (sig_index == -1 && ahead_car_index == -1){
+			// Accelerate to max speed
+			goto_speed(max_speed);
+		}else if (sig_index != -1 && ahead_car_index == -1){
+			// Only Signal Ahead
+			int target_speed = target_speed_signal;
+			goto_speed(target_speed);
+		}else if (sig_index == -1 && ahead_car_index != -1){
+			// Only Car Ahead
+			int target_speed = target_speed_car;
+			goto_speed(target_speed);
+		}else if (sig_index != -1 && ahead_car_index != -1){
+			// Both Car and Signal Ahead
+			int target_speed = min(target_speed_signal, target_speed_car);
+			goto_speed(target_speed);
+		}
+		// Move according to modified speed
 		location = location + c_speed;
-		// Set Speed
-		if (c_speed.x < max_speed){
-			c_speed.x = c_speed.x + c_acc.x;
+	}
+
+	int get_ahead_signal(vector<Signal> signal_list){
+		int sig=-1;
+		int dis=2*max_speed;
+		for (int i=0; i<signal_list.size(); i++){
+			if (signal_list[i].pos > location.x && signal_list[i].pos - location.x <= dis){
+				sig = i;
+				dis = signal_list[i].pos - location.x;
+			}
 		}
-		if (c_speed.x > max_speed){
-			c_speed.x = max_speed;
+		return sig;
+	}
+
+	int get_ahead_car(vector<Vehicle> veh_list){
+
+		int forw_car = -1;
+		int min = max_speed * max_speed / max_acc;	
+		for (int i=0; i<veh_list.size(); i++){
+			int dis_bw_cars = veh_list[i].location.x - veh_list[i].size.x - location.x;
+			if (dis_bw_cars > 0 && dis_bw_cars < min){
+				min = dis_bw_cars;
+				forw_car = i;
+			}
 		}
-		if (c_speed.y < max_side_speed){
-			c_speed.y = c_speed.y + c_acc.y;
+		return forw_car;
+	}
+
+	void goto_speed(int target){
+		cout << "Target:" << target;
+		if (target > c_speed.x){
+			c_speed.x = c_speed.x + max_acc;
+			if (c_speed.x > max_speed){
+				c_speed.x = max_speed;
+			}
+			if (c_speed.x > target){
+				c_speed.x = target;
+			}
+		}else if (target < c_speed.x){
+			c_speed.x = c_speed.x - max_acc;
+			if (c_speed.x < -1*max_speed){
+				c_speed.x = max_speed;
+			}
+			if (c_speed.x < target){
+				c_speed.x = target;
+			}
 		}
-		if (c_speed.y > max_side_speed){
-			c_speed.y = max_side_speed;
-		}
-		// Decide new acceleration
-		c_acc.x = max_acc;
+		cout << " Set: " << c_speed.x << endl;
 	}
 
 	void print(){
@@ -89,30 +212,7 @@ public:
 	}
 };
 
-class Signal{
-public:
-	Signal(){
-		time = 0;
-		change_time = 2;
-		status = 'r';
-	}
-	int id;
-	int time;						// Signal Timer
-	int change_time;		// Time after which signal changes
-	int pos;
-	char status;			// RED, GREEN
 
-	void run(){
-		time = (time + 1) % change_time;
-		if (time == 0){
-			if (status == 'r'){
-				status = 'g';
-			}else{
-				status = 'r';
-			}
-		}
-	}
-};
 
 class Road{
 public:
@@ -199,13 +299,13 @@ public:
 
 	void run(){
 		global_time++;
-		// modify vehicles/road
-		for (int i=0; i<vehicles_list.size(); i++){
-			vehicles_list[i].run();
-		}
 		// modify signals
 		for (int i=0; i<traf_signal_list.size(); i++){
 			traf_signal_list[i].run();
+		}
+		// modify vehicles/road
+		for (int i=0; i<vehicles_list.size(); i++){
+			vehicles_list[i].run(vehicles_list, traf_signal_list);
 		}
 		update_map();
 		// print_cars();
