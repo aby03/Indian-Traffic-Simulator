@@ -36,3 +36,8 @@ Print Road
 
 ----Assumptions
 no timer with light visible
+
+----Vehicle
+target_speed_signal
+target_speed_vehicle
+target_speed
