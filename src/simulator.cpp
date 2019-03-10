@@ -121,7 +121,7 @@ public:
 			}else if (ahead_car_back > location.x + stopping_dis && ahead_car_back <= location.x + stopping_dis + max_speed + 1){
 				// Match Speed and decrease distance
 				if (ahead_car_back - location.x > 2){
-					target_speed_car = ahead_car.c_speed.x + 1;
+					target_speed_car = ahead_car.c_speed.x;
 					cout << "Closing gap with ahead car" << endl;
 				}else{
 					target_speed_car = ahead_car.c_speed.x;

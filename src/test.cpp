@@ -48,7 +48,7 @@ int main(){
 	road1.display();
 
 	// Run Simulation
-	for (int i=0; i<10; i++){
+	for (int i=0; i<15; i++){
 		road1.run();
 		road1.update_map();
 		road1.display();
