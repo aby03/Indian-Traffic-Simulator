@@ -256,7 +256,6 @@ int main(int argc, char **argv)
 
     // glutIgnoreKeyRepeat(1);
     // glutSpecialUpFunc(pressKey);        
-
     // Add a timer for the update(...) function
     // glutTimerFunc(25, update, 0);
 
