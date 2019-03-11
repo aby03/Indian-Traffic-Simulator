@@ -311,6 +311,12 @@ public:
 		for (int i=0; i<vehicles_list.size(); i++){
 			vehicles_list[i].run(vehicles_list, traf_signal_list);
 		}
+		for (int i=0; i<vehicles_list.size(); i++){
+			if (vehicles_list[i].location.x - vehicles_list[i].size.x > length){
+				vehicles_list.erase(vehicles_list.begin()+i);
+				i--;
+			}
+		}
 		update_map();
 		// print_cars();
 	}
