@@ -158,7 +158,7 @@ public:
 
 	int get_ahead_signal(vector<Signal> signal_list){
 		int sig=-1;
-		int dis=2*max_speed;
+		int dis=2*max_speed*max_speed;
 		for (int i=0; i<signal_list.size(); i++){
 			if (signal_list[i].pos > location.x && signal_list[i].pos - location.x <= dis){
 				sig = i;
@@ -171,12 +171,15 @@ public:
 	int get_ahead_car(vector<Vehicle> veh_list){
 
 		int forw_car = -1;
-		int min = max_speed * max_speed / max_acc;	
+		int min = 2*max_speed * max_speed / max_acc;	
 		for (int i=0; i<veh_list.size(); i++){
 			int dis_bw_cars = veh_list[i].location.x - veh_list[i].size.x - location.x;
-			if (dis_bw_cars > 0 && dis_bw_cars < min){
-				min = dis_bw_cars;
-				forw_car = i;
+			if ((location.y - size.y < veh_list[i].location.y && veh_list[i].location.y <= location.y) || (location.y - size.y <= (veh_list[i].location.y-veh_list[i].size.y) && veh_list[i].location.y-veh_list[i].size.y < location.y))
+			{
+				if (dis_bw_cars > 0 && dis_bw_cars < min){
+					min = dis_bw_cars;
+					forw_car = i;
+				}
 			}
 		}
 		return forw_car;
