@@ -96,8 +96,7 @@ public:
 			tmp = tmp - max_acc;
 		}
 		// Check for signal and get target_speed_signal
-		int sig_index = get_ahead_signal(signal_list);
-		int target_speed_signal = max_speed;
+		int sig_index = get_ahead_signal(signal_list);int target_speed_signal = max_speed;
 		if (sig_index != -1){
 			if (signal_list[sig_index].pos <= location.x + stopping_dis + max_speed && signal_list[sig_index].status == 'r'){
 				if (signal_list[sig_index].pos - location.x > 1){
@@ -171,7 +170,7 @@ public:
 	int get_ahead_car(vector<Vehicle> veh_list){
 
 		int forw_car = -1;
-		int min = max_speed * max_speed / max_acc;	
+		int min = 2*max_speed * max_speed / max_acc;	
 		for (int i=0; i<veh_list.size(); i++){
 			int dis_bw_cars = veh_list[i].location.x - veh_list[i].size.x - location.x;
 			if (dis_bw_cars > 0 && dis_bw_cars < min){
@@ -314,11 +313,25 @@ public:
 	}
 
 	void spawn_vehicle(Vehicle veh){
-		srand (time(NULL));
+		srand (time(0));
 		veh.location.x = -1;
-		veh.location.y = rand()%(width-veh.size.y) + 1;
+		veh.location.y = -1;
+		while (veh.location.y == -1 || occupied(veh.location.y)){
+			veh.location.y = rand()%(width-veh.size.y + 1) + veh.size.y-1;
+		}
 		vehicles_list.push_back(veh);
+		print_cars();
 	}
+
+	bool occupied(int pos){
+		for (int i=0; i<vehicles_list.size(); i++){
+			Vehicle ve = vehicles_list[i];
+			if (ve.location.x - ve.size.x <= 0 && (ve.location.y >= pos && ve.location.y - ve.size.y < pos ) ){
+				return true;
+			} 
+		}
+		return false;
+	} 
 
 	void spawn_signal(Signal sig){
 		traf_signal_list.push_back(sig);
