@@ -8,6 +8,7 @@ using namespace std;
 
 Road road(0,4,10);
 Signal traf1;
+int id_counter = 0;
 
 struct vinfo{
 	char type;
@@ -140,7 +141,7 @@ int main(){
 						// Running simulation
 						if (line == "END"){
 							//TODO: run till road is clear
-							for (int i = 0; i< road.length; i++){
+							while (road.vehicles_list.size() > 0){
 								road.run();
 								road.display();
 							}
@@ -171,7 +172,8 @@ int main(){
 							for (int i = 0; i < vlist.size(); i++){
 								vinfo veh = vlist[i];
 								if (veh.type == str1.front()){
-									Vehicle vehicle1(str2,veh.length,veh.width,veh.maxspeed,veh.acc);
+									Vehicle vehicle1(id_counter, str2,veh.length,veh.width,veh.maxspeed,veh.acc);
+									id_counter++;
 									vehicle1.type = str1.front();
 									road.spawn_vehicle(vehicle1);
 									break;
