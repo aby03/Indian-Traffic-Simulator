@@ -56,7 +56,8 @@ public:
 class Vehicle{
 public:
 	// Fix Variables for an object
-	string id;
+	int id;
+	string color;
 	char type;
 	coords size;
 	int max_speed=1;
@@ -75,8 +76,9 @@ public:
 		c_acc.y=0;
 		stopping_dis=0;
 	}
-	Vehicle(string color, int l, int w, int speed, int acc){
-		id = color;
+	Vehicle(int i, string col, int l, int w, int speed, int acc){
+		id = i;
+		color = col;
 		size.x = l;
 		size.y = w;
 		int max_speed = speed;
@@ -115,11 +117,15 @@ public:
 		if (ahead_car_index != -1){
 			Vehicle ahead_car = veh_list[ahead_car_index];
 			int ahead_car_back = ahead_car.location.x - ahead_car.size.x;
-			if (ahead_car_back <= location.x + stopping_dis){
+			if (ahead_car_back < location.x + stopping_dis){
 				// Collision Inbound
 				target_speed_car = 0;
-				cout << "Colliding with: " << ahead_car.id << endl;
-			}else if (ahead_car_back > location.x + stopping_dis && ahead_car_back <= location.x + stopping_dis + max_speed + 1){
+				if (ahead_car_back < location.x){
+					cout << "Colliding with: " << ahead_car.id << endl;
+				}else{
+					cout << "Collision Inbound with: " << ahead_car.id << endl;
+				}
+			}else if (ahead_car_back >= location.x + stopping_dis && ahead_car_back <= location.x + stopping_dis + max_speed + 1){
 				// Match Speed and decrease distance
 				if (ahead_car_back - location.x > 2){
 					target_speed_car = ahead_car.c_speed.x;
@@ -311,8 +317,9 @@ public:
 		for (int i=0; i<vehicles_list.size(); i++){
 			vehicles_list[i].run(vehicles_list, traf_signal_list);
 		}
+
 		for (int i=0; i<vehicles_list.size(); i++){
-			if (vehicles_list[i].location.x - vehicles_list[i].size.x > length){
+			if (vehicles_list[i].location.x - vehicles_list[i].size.x + 2 > length){
 				vehicles_list.erase(vehicles_list.begin()+i);
 				i--;
 			}
