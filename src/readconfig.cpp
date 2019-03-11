@@ -155,17 +155,18 @@ int main(){
 
 						if (str1 == "Signal"){
 							if (str2 == "RED"){
-								traf1.status = 'r';
+								road.traf_signal_list[0].status = 'r';
+							}
+							if (str2 == "GREEN"){
+								road.traf_signal_list[0].status = 'g';
 							}
 						}
 						else if (str1 == "Pass"){
-							//TODO: run till str2 time
 							for (int i = 0; i< stoi(str2); i++){
 								road.run();
 								road.display();
 							}
 						}
-
 						else{
 							for (int i = 0; i < vlist.size(); i++){
 								vinfo veh = vlist[i];
