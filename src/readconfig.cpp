@@ -59,6 +59,7 @@ int main(){
 	vector<vinfo> vlist;
 	vinfo veh;
 	int flag = 0;
+
 	if (myfile.is_open()){
 
 		while ( getline(myfile, line) ){
@@ -139,6 +140,10 @@ int main(){
 						// Running simulation
 						if (line == "END"){
 							//TODO: run till road is clear
+							for (int i = 0; i< road.length; i++){
+								road.run();
+								road.display();
+							}
 							break;
 						}
 						string str1 = "";
@@ -155,6 +160,10 @@ int main(){
 						}
 						else if (str1 == "Pass"){
 							//TODO: run till str2 time
+							for (int i = 0; i< stoi(str2); i++){
+								road.run();
+								road.display();
+							}
 						}
 
 						else{
@@ -168,8 +177,8 @@ int main(){
 								}
 							}
 							road.run();
-							// road.display();
-							road.print_cars();
+							road.display();
+							// road.print_cars();
 						}
 
 					}
@@ -182,19 +191,19 @@ int main(){
 	else{cout << "Unable to open file" << endl;}
 	// Run Simulation
 
-	Vehicle car1;
-	car1.size.x = 2;
-	car1.size.y = 2;
-	car1.type = 'c';
-	road.spawn_vehicle(car1);
-	road.update_map();
-	// road.print_cars();
-	// road.display();
-	for (int i=0; i<20; i++){
-		road.run();
-		// road.display();
-		// road.print_cars();
-	}
+	// Vehicle car1;
+	// car1.size.x = 2;
+	// car1.size.y = 2;
+	// car1.type = 'c';
+	// road.spawn_vehicle(car1);
+	// road.update_map();
+	// // road.print_cars();
+	// // road.display();
+	// for (int i=0; i<20; i++){
+	// 	road.run();
+	// 	// road.display();
+	// 	// road.print_cars();
+	// }
 
 	return 0;
 }

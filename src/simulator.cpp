@@ -30,7 +30,7 @@ class Signal{
 public:
 	Signal(){
 		time = 0;
-		change_time = 2;
+		change_time = -1;
 		status = 'r';
 	}
 	int id;
@@ -40,14 +40,16 @@ public:
 	char status;			// RED, GREEN
 
 	void run(){
-		time = (time + 1) % change_time;
-		if (time == 0){
-			if (status == 'r'){
-				status = 'g';
-			}else{
-				status = 'r';
+		if (change_time != -1){
+			time = (time + 1) % change_time;
+			if (time == 0){
+				if (status == 'r'){
+					status = 'g';
+				}else{
+					status = 'r';
+				}
 			}
-		}
+		}		
 	}
 };
 
@@ -86,7 +88,7 @@ public:
 	void run(vector<Vehicle> veh_list, vector<Signal> signal_list){
 		// Modify Dynamic variables
 		// Get Stopping Distance
-		cout << "Vehicle: " << id << endl;
+		// cout << "Vehicle: " << id << endl;
 		stopping_dis = 0;
 		int tmp = c_speed.x - max_acc;
 		while (tmp > 0){
@@ -181,7 +183,7 @@ public:
 	}
 
 	void goto_speed(int target){
-		cout << "Target:" << target;
+		// cout << "Target:" << target;
 		if (target > c_speed.x){
 			c_speed.x = c_speed.x + max_acc;
 			if (c_speed.x > max_speed){
@@ -199,7 +201,7 @@ public:
 				c_speed.x = target;
 			}
 		}
-		cout << " Set: " << c_speed.x << endl;
+		// cout << " Set: " << c_speed.x << endl;
 	}
 
 	void print(){
@@ -300,9 +302,9 @@ public:
 	void run(){
 		global_time++;
 		// modify signals
-		for (int i=0; i<traf_signal_list.size(); i++){
-			traf_signal_list[i].run();
-		}
+		// for (int i=0; i<traf_signal_list.size(); i++){
+		// 	traf_signal_list[i].run();
+		// }
 		// modify vehicles/road
 		for (int i=0; i<vehicles_list.size(); i++){
 			vehicles_list[i].run(vehicles_list, traf_signal_list);
