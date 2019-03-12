@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>     /* rand */
+#include <algorithm>
 
 using namespace std;
 
@@ -117,7 +118,7 @@ public:
 		if (ahead_car_index != -1){
 			Vehicle ahead_car = veh_list[ahead_car_index];
 			int ahead_car_back = ahead_car.location.x - ahead_car.size.x;
-			// New
+			// Decide Speed according to ahead car
 			for (int i=max_acc; i>=-max_acc; i--){
 				int j_dis = get_stopping_dis(c_speed.x+i) + c_speed.x+i;
 				if ((location.x + j_dis <= ahead_car_back)){
@@ -125,31 +126,8 @@ public:
 					break;
 				}
 			}
-			// New End
-			/*
-			if (ahead_car_back < location.x + stopping_dis){
-				// Collision Inbound
-				target_speed_car = 0;
-				if (ahead_car_back < location.x){
-					cout << "Colliding with: " << ahead_car.id << endl;
-				}else{
-					cout << "Collision Inbound with: " << ahead_car.id << endl;
-				}
-			}else if (ahead_car_back >= location.x + stopping_dis && ahead_car_back <= location.x + stopping_dis + max_speed + 1){
-				// Match Speed and decrease distance
-				if (ahead_car_back - location.x > 2){
-					target_speed_car = ahead_car.c_speed.x;
-					cout << "Closing gap with ahead car" << endl;
-				}else{
-					target_speed_car = ahead_car.c_speed.x;
-					cout << "Matching speed with ahead car" << endl;
-				}
-				target_speed_car = min(max_speed, target_speed_car);
-			}else{
-				// Accelerate to max speed
-				cout << "Accelerating to max speed. NOT POSSIBLE CASE" << endl;
-			}
-			*/
+			// Check for side step
+
 		}
 		
 		if (sig_index == -1 && ahead_car_index == -1){
@@ -243,7 +221,11 @@ public:
 	}
 };
 
-
+struct vehicle_loc_comp{
+	inline bool operator () (const Vehicle a, const Vehicle b){
+		return a.location.x > b.location.x;
+	}
+};
 
 class Road{
 public:
@@ -344,6 +326,11 @@ public:
 				vehicles_list.erase(vehicles_list.begin()+i);
 				i--;
 			}
+		}
+		// Sort Vehicles List according to x coordinate
+		sort(vehicles_list.begin(), vehicles_list.end(), vehicle_loc_comp());
+		for (int i=0; i<vehicles_list.size(); i++){
+			cout << vehicles_list[i].location.x << " " << endl;
 		}
 		update_map();
 		// print_cars();
