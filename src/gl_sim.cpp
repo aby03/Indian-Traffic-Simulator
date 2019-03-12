@@ -30,6 +30,7 @@ int sim_index = 0;
 int pass_count = 0;
 bool flag_end = false;
 // ------------ OpenGL Variables --------------------
+int time_step = 500;
 //Units used
 float ux = 0.1f;
 float uy = 0.1f;
@@ -353,7 +354,7 @@ void update(int value){
             flag_end = false;
         }else{
             glutPostRedisplay(); // Inform GLUT that the display has changed
-            glutTimerFunc(1000,update,0);
+            glutTimerFunc(time_step,update,0);
         }
     }else{
         if (pass_count > 0){
@@ -361,7 +362,7 @@ void update(int value){
             road.display();
             pass_count--;
             glutPostRedisplay(); // Inform GLUT that the display has changed
-            glutTimerFunc(1000,update,0);//Call update after each 25 millisecond
+            glutTimerFunc(time_step,update,0);//Call update after each 25 millisecond
         }else{
             if (sim_index < sim_cmd.size()){
                 string line = sim_cmd[sim_index];
@@ -412,7 +413,7 @@ void update(int value){
                     road.run();
                     road.display();
                     glutPostRedisplay(); // Inform GLUT that the display has changed
-                    glutTimerFunc(1000,update,0);//Call update after each 25 millisecond
+                    glutTimerFunc(time_step,update,0);//Call update after each 25 millisecond
                     return;
                 }
 
@@ -421,7 +422,7 @@ void update(int value){
         }
     }
     // glutPostRedisplay(); // Inform GLUT that the display has changed
-    // glutTimerFunc(1000,update,0);//Call update after each 25 millisecond
+    // glutTimerFunc(time_step,update,0);//Call update after each 25 millisecond
 }
 
 int main(int argc, char **argv)
@@ -433,6 +434,8 @@ int main(int argc, char **argv)
     int def_speed=1;
     int def_acc=1;
     vinfo veh;
+    veh.maxspeed = def_speed;
+    veh.acc = def_acc;
     int flag = 0;
     if (myfile.is_open()){
         while ( getline(myfile, line) ){
@@ -476,16 +479,19 @@ int main(int argc, char **argv)
                         int val = stoi(sval);
                         if (key == "Default_MaxSpeed"){
                             def_speed = val;
+                            veh.maxspeed = def_speed;
                         }
                         else if (key == "Default_Acceleration"){
                             def_acc = val;
+                            veh.acc = def_acc;
                         }
                     }
                     else if (curr == "[Vehicles]"){
                         if (key == "Vehicle_Type"){
                             if (flag == 1){
                                 vlist.push_back(veh);
-                                vinfo veh;
+                                veh.maxspeed = def_speed;
+                                veh.acc = def_acc;
                             }
                             veh.type = sval.front();
                             flag = 1;
@@ -537,7 +543,7 @@ int main(int argc, char **argv)
     // glutSpecialUpFunc(pressKey);        
 
     // Add a timer for the update(...) function
-    glutTimerFunc(1000, update, 0);
+    glutTimerFunc(time_step, update, 0);
     glutMainLoop();
     // cout << "Testing..." << endl;
     // using namespace std::this_thread; // sleep_for, sleep_until

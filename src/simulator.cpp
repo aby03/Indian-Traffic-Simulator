@@ -81,8 +81,8 @@ public:
 		color = col;
 		size.x = l;
 		size.y = w;
-		int max_speed = speed;
-		int max_acc = acc;
+		max_speed = speed;
+		max_acc = acc;
 		c_speed.x=0;
 		c_speed.y=0;
 	}
@@ -97,16 +97,16 @@ public:
 			stopping_dis += tmp;
 			tmp = tmp - max_acc;
 		}
+		int judge_distance = get_stopping_dis(c_speed.x+max_acc);
 		// Check for signal and get target_speed_signal
-		int sig_index = get_ahead_signal(signal_list);int target_speed_signal = max_speed;
+		int sig_index = get_ahead_signal(signal_list);
+		int target_speed_signal = max_speed;
 		if (sig_index != -1){
-			if (signal_list[sig_index].pos <= location.x + stopping_dis + max_speed && signal_list[sig_index].status == 'r'){
-				if (signal_list[sig_index].pos - location.x > 1){
-					target_speed_signal = 1;
-					cout << "Found Signal Speeding Down" << endl;
-				}else{
-					target_speed_signal = 0;
-					cout << "Found Signal Stopping" << endl;
+			for (int i=max_acc; i>=-max_acc; i--){
+				int j_dis = get_stopping_dis(c_speed.x+i) + c_speed.x+i;
+				if (signal_list[sig_index].status == 'r' && (location.x + j_dis < signal_list[sig_index].pos)){
+					target_speed_signal = c_speed.x+i;
+					break;
 				}
 			}
 		}
@@ -117,6 +117,16 @@ public:
 		if (ahead_car_index != -1){
 			Vehicle ahead_car = veh_list[ahead_car_index];
 			int ahead_car_back = ahead_car.location.x - ahead_car.size.x;
+			// New
+			for (int i=max_acc; i>=-max_acc; i--){
+				int j_dis = get_stopping_dis(c_speed.x+i) + c_speed.x+i;
+				if ((location.x + j_dis <= ahead_car_back)){
+					target_speed_car = c_speed.x+i;
+					break;
+				}
+			}
+			// New End
+			/*
 			if (ahead_car_back < location.x + stopping_dis){
 				// Collision Inbound
 				target_speed_car = 0;
@@ -139,6 +149,7 @@ public:
 				// Accelerate to max speed
 				cout << "Accelerating to max speed. NOT POSSIBLE CASE" << endl;
 			}
+			*/
 		}
 		
 		if (sig_index == -1 && ahead_car_index == -1){
@@ -161,9 +172,19 @@ public:
 		location = location + c_speed;
 	}
 
+	int get_stopping_dis(int speed){
+		stopping_dis = 0;
+		int tmp = speed - max_acc;
+		while (tmp > 0){
+			stopping_dis += tmp;
+			tmp = tmp - max_acc;
+		}
+		return stopping_dis;
+	}
+
 	int get_ahead_signal(vector<Signal> signal_list){
-		int sig=-1;
-		int dis=2*max_speed*max_speed;
+		int sig = -1;
+		int dis = get_stopping_dis(c_speed.x+max_acc)+c_speed.x+max_acc;
 		for (int i=0; i<signal_list.size(); i++){
 			if (signal_list[i].pos > location.x && signal_list[i].pos - location.x <= dis){
 				sig = i;
@@ -176,12 +197,12 @@ public:
 	int get_ahead_car(vector<Vehicle> veh_list){
 
 		int forw_car = -1;
-		int min = 2*max_speed * max_speed / max_acc;	
+		int min = get_stopping_dis(c_speed.x+max_acc)+c_speed.x+max_acc;
 		for (int i=0; i<veh_list.size(); i++){
 			int dis_bw_cars = veh_list[i].location.x - veh_list[i].size.x - location.x;
 			if ((location.y - size.y < veh_list[i].location.y && veh_list[i].location.y <= location.y) || (location.y - size.y <= (veh_list[i].location.y-veh_list[i].size.y) && veh_list[i].location.y-veh_list[i].size.y < location.y))
 			{
-				if (dis_bw_cars >= 0 && dis_bw_cars < min){
+				if (dis_bw_cars >= 0 && dis_bw_cars <= min){
 					min = dis_bw_cars;
 					forw_car = i;
 				}
@@ -332,8 +353,14 @@ public:
 		srand (time(0));
 		veh.location.x = -1;
 		veh.location.y = -1;
-		while (veh.location.y == -1 || occupied(veh.location.y)){
+		int count = 0;
+		while ((veh.location.y == -1 || occupied(veh.location.y)) && count < 1000){
 			veh.location.y = rand()%(width-veh.size.y + 1) + veh.size.y-1;
+			count++;
+		}
+		if (count == 1000){
+			cout << "No Space to Spawn Vehicle" << endl;
+			return;
 		}
 		vehicles_list.push_back(veh);
 		// print_cars();
