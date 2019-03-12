@@ -3,6 +3,7 @@
 #include <GL/glut.h>
 #include <math.h>
 
+using namespace std;
 
 //Units used
 float ux = 0.1f;
@@ -136,6 +137,7 @@ void drawCar(int carl, int carw)
 }
 
 void renderScene(){
+    cout << "Rendering..." << endl;
     // if (deltaMove)
     //     computePos(deltaMove);
     // if (deltaAngle)
@@ -294,8 +296,11 @@ int main(int argc, char **argv)
     // glutSpecialUpFunc(pressKey);        
 
     // Add a timer for the update(...) function
-    // glutTimerFunc(1000, update, 0);
-
+    glutTimerFunc(1000, update, 0);
+    cout << "TEST" << endl;
     glutMainLoop();
     return 0;
 }
+
+// To Compile
+// g++ simgl.cpp -lGL -lGLU -lglut
