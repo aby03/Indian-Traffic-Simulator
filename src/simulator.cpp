@@ -127,7 +127,8 @@ public:
 				}
 			}
 			// Check for side step
-
+			// int car_right_index = get_side_car(1);
+			// int car_left_index = get_side_car(-1);
 		}
 		
 		if (sig_index == -1 && ahead_car_index == -1){
@@ -187,6 +188,19 @@ public:
 			}
 		}
 		return forw_car;
+	}
+
+	int get_side_car(int side, vector<Vehicle> veh_list){
+		// index = -1;
+		// if (side == 1){
+		// 	for (int i=location.y; i<road.width; i++){
+		// 		for (int j=0; j<veh_list.size(); j++){
+		// 			// detect_collision
+		// 		}
+		// 	}
+		// }else{
+
+		// }
 	}
 
 	void goto_speed(int target){

@@ -265,6 +265,17 @@ void renderScene(){
         glVertex3f(ux/2, uy/2, 0);
         glEnd();
         glPopMatrix();
+        // White Line
+        glPushMatrix();
+        glTranslatef(road.traf_signal_list[i].pos*ux, 0, 0.0001f);
+        glBegin(GL_POLYGON);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        glVertex3f(-ux/2, uy/2, 0);
+        glVertex3f(-ux/2, -roadWidth*uy+uy/2, 0);
+        glVertex3f(ux/2, -roadWidth*uy+uy/2, 0);
+        glVertex3f(ux/2, uy/2, 0);
+        glEnd();
+        glPopMatrix();
     }
 
     // Draw Vehicles
