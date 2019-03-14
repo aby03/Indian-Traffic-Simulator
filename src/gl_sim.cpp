@@ -89,7 +89,7 @@ void drawCar(int carl, int carw, string color)
     float top_color_b = 0;
     if (color == "GREEN"){
         top_color_r = 0;
-        top_color_g = 1;
+        top_color_g = 0.6;
         top_color_b = 0;
     }else if (color == "RED"){
         top_color_r = 1;
