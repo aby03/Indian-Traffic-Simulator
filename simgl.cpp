@@ -294,8 +294,7 @@ int main(int argc, char **argv)
     // glutSpecialUpFunc(pressKey);        
 
     // Add a timer for the update(...) function
-    // glutTimerFunc(1000, update, 0);
-
+    glutTimerFunc(1000, update, 0);
     glutMainLoop();
     return 0;
 }
