@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>     /* rand */
+#include <algorithm>
 
 using namespace std;
 
@@ -57,6 +58,7 @@ class Vehicle{
 public:
 	// Fix Variables for an object
 	int id;
+	int time;
 	string color;
 	char type;
 	coords size;
@@ -68,6 +70,7 @@ public:
 	coords c_speed;
 	coords c_acc;
 	int stopping_dis;
+	int roadWidth;
 
 	Vehicle(){
 		c_speed.x=0;
@@ -81,35 +84,48 @@ public:
 		color = col;
 		size.x = l;
 		size.y = w;
-		int max_speed = speed;
-		int max_acc = acc;
+		max_speed = speed;
+		max_acc = acc;
 		c_speed.x=0;
 		c_speed.y=0;
 	}
 
-	void run(vector<Vehicle> veh_list, vector<Signal> signal_list){
+	void run(int t, vector<Vehicle> veh_list, vector<Signal> signal_list, int r_width){
 		// Modify Dynamic variables
+		time = t;
 		// Get Stopping Distance
 		// cout << "Vehicle: " << id << endl;
+		roadWidth = r_width;
 		stopping_dis = 0;
 		int tmp = c_speed.x - max_acc;
 		while (tmp > 0){
 			stopping_dis += tmp;
 			tmp = tmp - max_acc;
 		}
+		int judge_distance = get_stopping_dis(c_speed.x+max_acc);
 		// Check for signal and get target_speed_signal
-		int sig_index = get_ahead_signal(signal_list);int target_speed_signal = max_speed;
+		int sig_index = get_ahead_signal(signal_list);
+		int target_speed_signal = max_speed;
 		if (sig_index != -1){
-			if (signal_list[sig_index].pos <= location.x + stopping_dis + max_speed && signal_list[sig_index].status == 'r'){
-				if (signal_list[sig_index].pos - location.x > 1){
-					target_speed_signal = 1;
-					cout << "Found Signal Speeding Down" << endl;
-				}else{
-					target_speed_signal = 0;
-					cout << "Found Signal Stopping" << endl;
+			for (int i=max_acc; i>=-max_acc; i--){
+				int j_dis = get_stopping_dis(c_speed.x+i) + c_speed.x+i;
+				if (signal_list[sig_index].status == 'r' && (location.x + j_dis < signal_list[sig_index].pos)){
+					target_speed_signal = c_speed.x+i;
+					break;
 				}
 			}
 		}
+		// Get Side Speed
+		int shift = get_speed_shift(veh_list);
+		if (shift < 0 && c_speed.x > 0){
+			shift = -1;
+		}else if (shift > 0 && c_speed.x > 0){
+			shift = 1;
+		}else{
+			shift = 0;
+		}
+		c_speed.y = shift;
+		location.y = location.y + c_speed.y;
 
 		// Check for ahead car and get target_speed_car
 		int ahead_car_index = get_ahead_car(veh_list);
@@ -117,30 +133,20 @@ public:
 		if (ahead_car_index != -1){
 			Vehicle ahead_car = veh_list[ahead_car_index];
 			int ahead_car_back = ahead_car.location.x - ahead_car.size.x;
-			if (ahead_car_back < location.x + stopping_dis){
-				// Collision Inbound
-				target_speed_car = 0;
-				if (ahead_car_back < location.x){
-					cout << "Colliding with: " << ahead_car.id << endl;
-				}else{
-					cout << "Collision Inbound with: " << ahead_car.id << endl;
+			// Decide Speed according to ahead car
+			for (int i=max_acc; i>=-max_acc; i--){
+				int next_speed = c_speed.x + i;
+				if (next_speed > max_speed){
+					next_speed = max_speed;
 				}
-			}else if (ahead_car_back >= location.x + stopping_dis && ahead_car_back <= location.x + stopping_dis + max_speed + 1){
-				// Match Speed and decrease distance
-				if (ahead_car_back - location.x > 2){
-					target_speed_car = ahead_car.c_speed.x;
-					cout << "Closing gap with ahead car" << endl;
-				}else{
-					target_speed_car = ahead_car.c_speed.x;
-					cout << "Matching speed with ahead car" << endl;
+				int j_dis = get_stopping_dis(next_speed) + next_speed;
+				if ((location.x + j_dis <= ahead_car_back)){
+					target_speed_car = next_speed;
+					break;
 				}
-				target_speed_car = min(max_speed, target_speed_car);
-			}else{
-				// Accelerate to max speed
-				cout << "Accelerating to max speed. NOT POSSIBLE CASE" << endl;
 			}
 		}
-		
+
 		if (sig_index == -1 && ahead_car_index == -1){
 			// Accelerate to max speed
 			goto_speed(max_speed);
@@ -158,12 +164,22 @@ public:
 			goto_speed(target_speed);
 		}
 		// Move according to modified speed
-		location = location + c_speed;
+		location.x = location.x + c_speed.x;
+	}
+
+	int get_stopping_dis(int speed){
+		stopping_dis = 0;
+		int tmp = speed - max_acc;
+		while (tmp > 0){
+			stopping_dis += tmp;
+			tmp = tmp - max_acc;
+		}
+		return stopping_dis;
 	}
 
 	int get_ahead_signal(vector<Signal> signal_list){
-		int sig=-1;
-		int dis=2*max_speed*max_speed;
+		int sig = -1;
+		int dis = get_stopping_dis(c_speed.x+max_acc)+c_speed.x+max_acc;
 		for (int i=0; i<signal_list.size(); i++){
 			if (signal_list[i].pos > location.x && signal_list[i].pos - location.x <= dis){
 				sig = i;
@@ -176,18 +192,161 @@ public:
 	int get_ahead_car(vector<Vehicle> veh_list){
 
 		int forw_car = -1;
-		int min = 2*max_speed * max_speed / max_acc;	
+		int min = get_stopping_dis(c_speed.x+max_acc)+c_speed.x+max_acc;
 		for (int i=0; i<veh_list.size(); i++){
 			int dis_bw_cars = veh_list[i].location.x - veh_list[i].size.x - location.x;
 			if ((location.y - size.y < veh_list[i].location.y && veh_list[i].location.y <= location.y) || (location.y - size.y <= (veh_list[i].location.y-veh_list[i].size.y) && veh_list[i].location.y-veh_list[i].size.y < location.y))
 			{
-				if (dis_bw_cars >= 0 && dis_bw_cars < min){
+				if (dis_bw_cars >= 0 && dis_bw_cars <= min){
 					min = dis_bw_cars;
 					forw_car = i;
 				}
 			}
 		}
 		return forw_car;
+	}
+
+	int get_speed_shift(vector<Vehicle> veh_list){
+		//// a....b
+		//// ......
+		//// d....c
+		coords a, b, c, d, a2, b2, c2, d2;
+		a.x = location.x-size.x+1;
+		b.x = location.x+stopping_dis;
+		c.x = location.x+stopping_dis;
+		d.x = location.x-size.x+1;
+		int index = -1;
+		bool collision = false;
+		int possible_speed = 0;
+		int shift = 0;
+		coords backup_loc = location;
+		// Overtake from right
+		for (int i=location.y; i<roadWidth; i++){
+			a.y = i-size.y+1;
+			b.y = i-size.y+1;
+			c.y = i;
+			d.y = i;
+			for (int j=0; j<veh_list.size(); j++){
+				if (id == veh_list[j].id){
+					continue;
+				}
+				int x = veh_list[j].location.x;
+				int y = veh_list[j].location.y;
+				for (int k=0; k<veh_list[j].size.x; k++){
+					for (int l=0; l<veh_list[j].size.y; l++){
+						int ax = x - k;
+						int ay = y - l;
+						if (ax <= c.x && ax >= d.x && ay <= c.y && ay >= b.y){
+							collision = true;
+							if (i - backup_loc.y == 0){
+								cout << "Collision: " << id << endl;
+							}
+							break;
+						}
+					}
+					if (collision){
+						break;
+					}
+				}
+				if (collision){
+					break;
+				}
+			}
+			if (collision){
+				break;
+			}
+			// Get max_acc for ahead
+			location.y = i;
+			int ahead_car_index = get_ahead_car(veh_list);
+			int target_speed_car = max_speed;
+			if (ahead_car_index != -1){
+				Vehicle ahead_car = veh_list[ahead_car_index];
+				int ahead_car_back = ahead_car.location.x - ahead_car.size.x;
+				// Decide Speed according to ahead car
+				for (int i=max_acc; i>=-max_acc; i--){
+					int next_speed = c_speed.x + i;
+					if (next_speed > max_speed){
+						next_speed = max_speed;
+					}
+					int j_dis = get_stopping_dis(next_speed) + next_speed;
+					if ((location.x + j_dis <= ahead_car_back)){
+						target_speed_car = next_speed;
+						break;
+					}
+				}
+			}
+			if (target_speed_car > possible_speed){
+				possible_speed = target_speed_car;
+				shift = i-backup_loc.y;
+			}
+		}
+		location = backup_loc;
+		// Overtake from left
+		for (int i=location.y; i>=size.y-1; i--){
+			a.y = i-size.y+1;
+			b.y = i-size.y+1;
+			c.y = i;
+			d.y = i;
+			for (int j=0; j<veh_list.size(); j++){
+				if (id == veh_list[j].id){
+					continue;
+				}
+				int x = veh_list[j].location.x;
+				int y = veh_list[j].location.y;
+				for (int k=0; k<veh_list[j].size.x; k++){
+					for (int l=0; l<veh_list[j].size.y; l++){
+						int ax = x - k;
+						int ay = y - l;
+						if (ax <= c.x && ax >= d.x && ay <= c.y && ay >= b.y){
+							collision = true;
+							if (i - backup_loc.y == 0){
+								cout << "Collision: " << id << endl;
+							}
+							break;
+						}
+					}
+					if (collision){
+						break;
+					}
+				}
+				if (collision){
+					break;
+				}
+			}
+			if (collision){
+				break;
+			}
+			// Get max_acc for ahead
+			location.y = i;
+			int ahead_car_index = get_ahead_car(veh_list);
+			int target_speed_car = max_speed;
+			if (ahead_car_index != -1){
+				Vehicle ahead_car = veh_list[ahead_car_index];
+				int ahead_car_back = ahead_car.location.x - ahead_car.size.x;
+				// Decide Speed according to ahead car
+				for (int i=max_acc; i>=-max_acc; i--){
+					int next_speed = c_speed.x + i;
+					if (next_speed > max_speed){
+						next_speed = max_speed;
+					}
+					int j_dis = get_stopping_dis(next_speed) + next_speed;
+					if ((location.x + j_dis <= ahead_car_back)){
+						target_speed_car = next_speed;
+						break;
+					}
+				}
+			}
+			if (target_speed_car > possible_speed){
+				possible_speed = target_speed_car;
+				shift = i-backup_loc.y;
+			}else if (target_speed_car == possible_speed && abs(shift) > abs(i-backup_loc.y)){
+				possible_speed = target_speed_car;
+				shift = i-backup_loc.y;
+			}
+		}
+		location = backup_loc;
+		// cout << "Car ID type: " << id << type << " Possible Speed: " << possible_speed << " Shift " << shift << endl;
+		return shift;
 	}
 
 	void goto_speed(int target){
@@ -222,7 +381,11 @@ public:
 	}
 };
 
-
+struct vehicle_loc_comp{
+	inline bool operator () (const Vehicle a, const Vehicle b){
+		return a.location.x > b.location.x;
+	}
+};
 
 class Road{
 public:
@@ -315,7 +478,7 @@ public:
 		// }
 		// modify vehicles/road
 		for (int i=0; i<vehicles_list.size(); i++){
-			vehicles_list[i].run(vehicles_list, traf_signal_list);
+			vehicles_list[i].run(global_time, vehicles_list, traf_signal_list, width);
 		}
 
 		for (int i=0; i<vehicles_list.size(); i++){
@@ -324,6 +487,8 @@ public:
 				i--;
 			}
 		}
+		// Sort Vehicles List according to x coordinate
+		sort(vehicles_list.begin(), vehicles_list.end(), vehicle_loc_comp());
 		update_map();
 		// print_cars();
 	}
@@ -332,8 +497,14 @@ public:
 		srand (time(0));
 		veh.location.x = -1;
 		veh.location.y = -1;
-		while (veh.location.y == -1 || occupied(veh.location.y)){
+		int count = 0;
+		while ((veh.location.y == -1 || occupied(veh.location.y)) && count < 1000){
 			veh.location.y = rand()%(width-veh.size.y + 1) + veh.size.y-1;
+			count++;
+		}
+		if (count == 1000){
+			cout << "No Space to Spawn Vehicle" << endl;
+			return;
 		}
 		vehicles_list.push_back(veh);
 		// print_cars();
