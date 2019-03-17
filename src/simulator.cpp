@@ -71,6 +71,10 @@ public:
 	coords c_acc;
 	int stopping_dis;
 	int roadWidth;
+	// Indian
+	int jump_signal = -1;
+	bool jump_attempt = false;
+	float jump_chance = 0.05;
 
 	Vehicle(){
 		c_speed.x=0;
@@ -146,21 +150,45 @@ public:
 			}
 		}
 
-		if (sig_index == -1 && ahead_car_index == -1){
+		if ((sig_index == -1 || jump_signal >= 0) && ahead_car_index == -1){
 			// Accelerate to max speed
+			if (sig_index == -1){
+				jump_signal = -1;
+				jump_attempt = false;
+			}
 			goto_speed(max_speed);
-		}else if (sig_index != -1 && ahead_car_index == -1){
+		}else if ((sig_index != -1 && jump_signal == -1) && ahead_car_index == -1){
 			// Only Signal Ahead
+			if (!jump_attempt){
+				jump_signal = try_jump(jump_chance);
+			}
 			int target_speed = target_speed_signal;
-			goto_speed(target_speed);
-		}else if (sig_index == -1 && ahead_car_index != -1){
+			if (jump_signal >= 0){
+				goto_speed(max_speed);
+			}else{
+				goto_speed(target_speed);
+			}
+		}else if ((sig_index == -1 || jump_signal >= 0) && ahead_car_index != -1){
 			// Only Car Ahead
+			if (sig_index == -1){
+				jump_signal = -1;
+				jump_attempt = false;
+			}
 			int target_speed = target_speed_car;
 			goto_speed(target_speed);
-		}else if (sig_index != -1 && ahead_car_index != -1){
+		}else if ((sig_index != -1 && jump_signal == -1) && ahead_car_index != -1){
 			// Both Car and Signal Ahead
 			int target_speed = min(target_speed_signal, target_speed_car);
-			goto_speed(target_speed);
+			if (target_speed_signal < target_speed_car){
+				if (!jump_attempt){
+					jump_signal = try_jump(jump_chance);
+				}
+			}
+			if (jump_signal >= 0){
+				goto_speed(target_speed_car);
+			}else{
+				goto_speed(target_speed);
+			}
 		}
 		// Move according to modified speed
 		location.x = location.x + c_speed.x;
@@ -171,6 +199,18 @@ public:
 		while (tmp > 0){
 			stopping_dis += tmp;
 			tmp = tmp - max_acc;
+		}
+	}
+
+	int try_jump(float chance){
+		jump_attempt = true;
+		int percent = chance * 100;
+		int ans = rand() % 100;
+		if (ans <= percent){
+			cout << "Vehicle: " << id << " Jumping Signal" << endl;
+			return 0;
+		}else{
+			return -1;
 		}
 	}
 
@@ -253,7 +293,7 @@ public:
 						if (ax <= c.x && ax >= d.x && ay <= c.y && ay >= b.y){
 							collision = true;
 							if (i - backup_loc.y == 0 && time == veh_list[j].time){
-								cout << "Collision: " << id << " with " << veh_list[j].id << endl;
+								// cout << "Collision: " << id << " with " << veh_list[j].id << endl;
 							}
 							break;
 						}
@@ -314,7 +354,7 @@ public:
 						if (ax <= c.x && ax >= d.x && ay <= c.y && ay >= b.y){
 							collision = true;
 							if (i - backup_loc.y == 0){
-								cout << "Collision: " << id << endl;
+								// cout << "Collision: " << id << endl;
 							}
 							break;
 						}
