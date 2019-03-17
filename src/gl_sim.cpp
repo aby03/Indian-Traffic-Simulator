@@ -471,6 +471,8 @@ int main(int argc, char **argv)
                         }
                         else if (key == "Road_Length"){
                             road.setLength(val);
+                            r = val/3;
+                            z = r/3;
                         }
                         else if (key == "Road_Width"){
                             road.setWidth(val);
@@ -496,6 +498,9 @@ int main(int argc, char **argv)
                         else if (key == "Default_Acceleration"){
                             def_acc = val;
                             veh.acc = def_acc;
+                        }
+                        else if (key == "Time_Step"){
+                            time_step = val;
                         }
                     }
                     else if (curr == "[Vehicles]"){
@@ -523,6 +528,7 @@ int main(int argc, char **argv)
                     }
 
                     else if (curr == "[Simulation]"){
+                        vlist.push_back(veh);
                         sim_cmd.push_back(line);
                     }
                     else{cout << "No headers given yet" << endl;}

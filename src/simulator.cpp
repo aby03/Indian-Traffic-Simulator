@@ -132,7 +132,7 @@ public:
 
 		// Check for ahead car and get target_speed_car
 		int ahead_car_index = get_ahead_car(veh_list);
-		int target_speed_car = max_speed;
+		int target_speed_car = 0;
 		if (ahead_car_index != -1){
 			Vehicle ahead_car = veh_list[ahead_car_index];
 			int ahead_car_back = ahead_car.location.x - ahead_car.size.x;
@@ -314,6 +314,7 @@ public:
 			int ahead_car_index = get_ahead_car(veh_list);
 			int target_speed_car = max_speed;
 			if (ahead_car_index != -1){
+				target_speed_car = 0;
 				Vehicle ahead_car = veh_list[ahead_car_index];
 				int ahead_car_back = ahead_car.location.x - ahead_car.size.x;
 				// Decide Speed according to ahead car
@@ -375,6 +376,7 @@ public:
 			int ahead_car_index = get_ahead_car(veh_list);
 			int target_speed_car = max_speed;
 			if (ahead_car_index != -1){
+				target_speed_car = 0;
 				Vehicle ahead_car = veh_list[ahead_car_index];
 				int ahead_car_back = ahead_car.location.x - ahead_car.size.x;
 				// Decide Speed according to ahead car
