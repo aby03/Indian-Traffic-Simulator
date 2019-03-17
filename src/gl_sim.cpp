@@ -21,6 +21,7 @@ struct vinfo{
     int maxspeed = 1;
     int acc = 1;
 };
+
 Road road(0,4,10);
 Signal traf1;
 int id_counter = 0;
@@ -106,7 +107,7 @@ void drawCar(int carl, int carw, string color)
 
     //To create gaps in between adjacent cars
     carX -= 0.03f;
-    carY -= 0.03f; 
+    carY -= 0.03f;
 
     glPushMatrix();
 

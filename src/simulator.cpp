@@ -75,11 +75,10 @@ public:
 	Vehicle(){
 		c_speed.x=0;
 		c_speed.y=0;
-		c_acc.x=1;
-		c_acc.y=0;
 		stopping_dis=0;
 	}
 	Vehicle(int i, string col, int l, int w, int speed, int acc){
+		stopping_dis=0;
 		id = i;
 		color = col;
 		size.x = l;
@@ -165,6 +164,14 @@ public:
 		}
 		// Move according to modified speed
 		location.x = location.x + c_speed.x;
+
+		// Getting stopping distance again
+		stopping_dis = 0;
+		tmp = c_speed.x - max_acc;
+		while (tmp > 0){
+			stopping_dis += tmp;
+			tmp = tmp - max_acc;
+		}
 	}
 
 	int get_stopping_dis(int speed){
@@ -232,14 +239,21 @@ public:
 				}
 				int x = veh_list[j].location.x;
 				int y = veh_list[j].location.y;
-				for (int k=0; k<veh_list[j].size.x; k++){
-					for (int l=0; l<veh_list[j].size.y; l++){
+				int x_length = veh_list[j].size.x;
+				int y_length = veh_list[j].size.y;
+				if (time != veh_list[j].time){
+					x = veh_list[j].location.x + veh_list[j].stopping_dis;
+					x_length = veh_list[j].size.x + veh_list[j].stopping_dis;
+					// cout << "X: " << x << " X_L: " << x_length << endl;
+				}
+				for (int k=0; k<x_length; k++){
+					for (int l=0; l<y_length; l++){
 						int ax = x - k;
 						int ay = y - l;
 						if (ax <= c.x && ax >= d.x && ay <= c.y && ay >= b.y){
 							collision = true;
-							if (i - backup_loc.y == 0){
-								cout << "Collision: " << id << endl;
+							if (i - backup_loc.y == 0 && time == veh_list[j].time){
+								cout << "Collision: " << id << " with " << veh_list[j].id << endl;
 							}
 							break;
 						}
@@ -498,7 +512,7 @@ public:
 		veh.location.x = -1;
 		veh.location.y = -1;
 		int count = 0;
-		while ((veh.location.y == -1 || occupied(veh.location.y)) && count < 1000){
+		while ((veh.location.y == -1 || occupied(veh.location.y, veh.size.y)) && count < 1000){
 			veh.location.y = rand()%(width-veh.size.y + 1) + veh.size.y-1;
 			count++;
 		}
@@ -510,10 +524,10 @@ public:
 		// print_cars();
 	}
 
-	bool occupied(int pos){
+	bool occupied(int pos, int y_size){
 		for (int i=0; i<vehicles_list.size(); i++){
 			Vehicle ve = vehicles_list[i];
-			if (ve.location.x - ve.size.x <= 0 && (ve.location.y >= pos && ve.location.y - ve.size.y < pos ) ){
+			if (ve.location.x - ve.size.x <= 0 && (ve.location.y >= pos - y_size+1 && ve.location.y - ve.size.y < pos ) ){
 				return true;
 			} 
 		}
