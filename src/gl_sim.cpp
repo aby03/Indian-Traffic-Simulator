@@ -471,8 +471,8 @@ int main(int argc, char **argv)
                         }
                         else if (key == "Road_Length"){
                             road.setLength(val);
-                            r = val/3;
-                            z = r/3;
+                            r = val/8;
+                            z = r;
                         }
                         else if (key == "Road_Width"){
                             road.setWidth(val);
@@ -546,7 +546,7 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800, 800);
-    glutInitWindowPosition(100, 100);
+    glutInitWindowPosition(50, 50);
     glutCreateWindow("Traffic Simulator");
         initRendering();
 
