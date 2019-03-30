@@ -20,6 +20,7 @@ struct vinfo{
     int width = 1;
     int maxspeed = 1;
     int acc = 1;
+    int bike_feat = 0;
 };
 
 Road road(0,4,10);
@@ -253,7 +254,7 @@ void renderScene(){
     // Draw Signals
     for (int i=0; i<road.traf_signal_list.size(); i++){
         glPushMatrix();
-        glTranslatef(road.traf_signal_list[i].pos*ux, uy, 0);
+        glTranslatef(road.traf_signal_list[i].pos*ux, uy*2, 0);
         glBegin(GL_POLYGON);
         if (road.traf_signal_list[i].status == 'r'){
             glColor3f(1.0f, 0.0f, 0.0f);
@@ -271,8 +272,8 @@ void renderScene(){
         glTranslatef(road.traf_signal_list[i].pos*ux, 0, 0.0001f);
         glBegin(GL_POLYGON);
         glColor3f(1.0f, 1.0f, 1.0f);
-        glVertex3f(-ux/2, uy/2, 0);
-        glVertex3f(-ux/2, -roadWidth*uy+uy/2, 0);
+        glVertex3f(-(ux*3)/2, uy/2, 0);
+        glVertex3f(-(ux*3)/2, -roadWidth*uy+uy/2, 0);
         glVertex3f(ux/2, -roadWidth*uy+uy/2, 0);
         glVertex3f(ux/2, uy/2, 0);
         glEnd();
@@ -415,10 +416,17 @@ void update(int value){
                     for (int i = 0; i < vlist.size(); i++){
                         vinfo veh = vlist[i];
                         if (veh.type == str1.front()){
-                            Vehicle vehicle1(id_counter, str2,veh.length,veh.width,veh.maxspeed,veh.acc);
-                            id_counter++;
-                            vehicle1.type = str1.front();
-                            road.spawn_vehicle(vehicle1);
+                            if (veh.bike_feat == 1){
+                                Vehicle vehicle1(id_counter, str2,veh.length,veh.width,veh.maxspeed,veh.acc, veh.bike_feat);
+                                id_counter++;
+                                vehicle1.type = str1.front();
+                                road.spawn_vehicle(vehicle1);
+                            }else{
+                                Vehicle vehicle1(id_counter, str2,veh.length,veh.width,veh.maxspeed,veh.acc);
+                                id_counter++;
+                                vehicle1.type = str1.front();
+                                road.spawn_vehicle(vehicle1);
+                            }
                             break;
                         }
                     }
@@ -509,6 +517,7 @@ int main(int argc, char **argv)
                                 vlist.push_back(veh);
                                 veh.maxspeed = def_speed;
                                 veh.acc = def_acc;
+                                veh.bike_feat = 0;
                             }
                             veh.type = sval.front();
                             flag = 1;
@@ -524,6 +533,10 @@ int main(int argc, char **argv)
                         }
                         else if (key == "Vehicle_Acceleration"){
                             veh.acc = stoi(sval);
+                        }
+                        else if (key == "Vehicle_Bike_Feature"){
+                            veh.bike_feat = stoi(sval);
+                            cout << "Bike " << sval << endl;
                         }
                     }
 

@@ -75,12 +75,14 @@ public:
 	int jump_signal = -1;
 	bool jump_attempt = false;
 	float jump_chance = 0.05;
+	int bike_feat = 0;
 
 	Vehicle(){
 		c_speed.x=0;
 		c_speed.y=0;
 		stopping_dis=0;
 	}
+
 	Vehicle(int i, string col, int l, int w, int speed, int acc){
 		stopping_dis=0;
 		id = i;
@@ -91,6 +93,19 @@ public:
 		max_acc = acc;
 		c_speed.x=0;
 		c_speed.y=0;
+	}
+
+	Vehicle(int i, string col, int l, int w, int speed, int acc, int bike){
+		stopping_dis=0;
+		id = i;
+		color = col;
+		size.x = l;
+		size.y = w;
+		max_speed = speed;
+		max_acc = acc;
+		c_speed.x=0;
+		c_speed.y=0;
+		bike_feat = bike;
 	}
 
 	void run(int t, vector<Vehicle> veh_list, vector<Signal> signal_list, int r_width){
@@ -112,17 +127,24 @@ public:
 		if (sig_index != -1){
 			for (int i=max_acc; i>=-max_acc; i--){
 				int j_dis = get_stopping_dis(c_speed.x+i) + c_speed.x+i;
-				if (signal_list[sig_index].status == 'r' && (location.x + j_dis < signal_list[sig_index].pos)){
-					target_speed_signal = c_speed.x+i;
-					break;
+				if (bike_feat == 1){
+					if (signal_list[sig_index].status == 'r' && (location.x + j_dis < signal_list[sig_index].pos)){
+						target_speed_signal = c_speed.x+i;
+						break;
+					}	
+				}else{
+					if (signal_list[sig_index].status == 'r' && (location.x + j_dis < signal_list[sig_index].pos-1)){
+						target_speed_signal = c_speed.x+i;
+						break;
+					}
 				}
 			}
 		}
 		// Get Side Speed
 		int shift = get_speed_shift(veh_list);
-		if (shift < 0 && c_speed.x > 0){
+		if (shift < 0){
 			shift = -1;
-		}else if (shift > 0 && c_speed.x > 0){
+		}else if (shift > 0){
 			shift = 1;
 		}else{
 			shift = 0;
@@ -159,7 +181,7 @@ public:
 			goto_speed(max_speed);
 		}else if ((sig_index != -1 && jump_signal == -1) && ahead_car_index == -1){
 			// Only Signal Ahead
-			if (!jump_attempt){
+			if (!jump_attempt && signal_list[sig_index].status == 'r'){
 				jump_signal = try_jump(jump_chance);
 			}
 			int target_speed = target_speed_signal;
@@ -226,7 +248,7 @@ public:
 
 	int get_ahead_signal(vector<Signal> signal_list){
 		int sig = -1;
-		int dis = get_stopping_dis(c_speed.x+max_acc)+c_speed.x+max_acc;
+		int dis = get_stopping_dis(c_speed.x+2*max_acc)+c_speed.x+2*max_acc;
 		for (int i=0; i<signal_list.size(); i++){
 			if (signal_list[i].pos > location.x && signal_list[i].pos - location.x <= dis){
 				sig = i;
@@ -239,14 +261,20 @@ public:
 	int get_ahead_car(vector<Vehicle> veh_list){
 
 		int forw_car = -1;
-		int min = get_stopping_dis(c_speed.x+max_acc)+c_speed.x+max_acc;
+		int min = get_stopping_dis(c_speed.x+2*max_acc)+c_speed.x+2*max_acc;
 		for (int i=0; i<veh_list.size(); i++){
 			int dis_bw_cars = veh_list[i].location.x - veh_list[i].size.x - location.x;
-			if ((location.y - size.y < veh_list[i].location.y && veh_list[i].location.y <= location.y) || (location.y - size.y <= (veh_list[i].location.y-veh_list[i].size.y) && veh_list[i].location.y-veh_list[i].size.y < location.y))
-			{
-				if (dis_bw_cars >= 0 && dis_bw_cars <= min){
-					min = dis_bw_cars;
-					forw_car = i;
+			for (int j=0; j < veh_list[i].size.y; j++){
+				if (forw_car == i){ break; }
+				for (int k=0; k < size.y; k++){
+					if (forw_car == i){ break; }
+					if (location.y - k == veh_list[i].location.y - j){
+						if (dis_bw_cars >= 0 && dis_bw_cars <= min){
+							min = dis_bw_cars;
+							forw_car = i;
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -348,13 +376,20 @@ public:
 				}
 				int x = veh_list[j].location.x;
 				int y = veh_list[j].location.y;
-				for (int k=0; k<veh_list[j].size.x; k++){
-					for (int l=0; l<veh_list[j].size.y; l++){
+				int x_length = veh_list[j].size.x;
+				int y_length = veh_list[j].size.y;
+				if (time != veh_list[j].time){
+					x = veh_list[j].location.x + veh_list[j].stopping_dis;
+					x_length = veh_list[j].size.x + veh_list[j].stopping_dis;
+					// cout << "X: " << x << " X_L: " << x_length << endl;
+				}
+				for (int k=0; k<x_length; k++){
+					for (int l=0; l<y_length; l++){
 						int ax = x - k;
 						int ay = y - l;
 						if (ax <= c.x && ax >= d.x && ay <= c.y && ay >= b.y){
 							collision = true;
-							if (i - backup_loc.y == 0){
+							if (i - backup_loc.y == 0 && time == veh_list[j].time){
 								// cout << "Collision: " << id << endl;
 							}
 							break;
