@@ -142,9 +142,9 @@ public:
 		}
 		// Get Side Speed
 		int shift = get_speed_shift(veh_list);
-		if (shift < 0){
+		if (shift < 0 && (c_speed.x > 0 || bike_feat == 1)){
 			shift = -1;
-		}else if (shift > 0){
+		}else if (shift > 0 && (c_speed.x > 0 || bike_feat == 1)){
 			shift = 1;
 		}else{
 			shift = 0;
@@ -216,12 +216,7 @@ public:
 		location.x = location.x + c_speed.x;
 
 		// Getting stopping distance again
-		stopping_dis = 0;
-		tmp = c_speed.x - max_acc;
-		while (tmp > 0){
-			stopping_dis += tmp;
-			tmp = tmp - max_acc;
-		}
+		stopping_dis = get_stopping_dis(c_speed.x);
 	}
 
 	int try_jump(float chance){
@@ -237,13 +232,13 @@ public:
 	}
 
 	int get_stopping_dis(int speed){
-		stopping_dis = 0;
+		int stop = 0;
 		int tmp = speed - max_acc;
 		while (tmp > 0){
-			stopping_dis += tmp;
+			stop += tmp;
 			tmp = tmp - max_acc;
 		}
-		return stopping_dis;
+		return stop;
 	}
 
 	int get_ahead_signal(vector<Signal> signal_list){
@@ -318,13 +313,24 @@ public:
 					for (int l=0; l<y_length; l++){
 						int ax = x - k;
 						int ay = y - l;
-						if (ax <= c.x && ax >= d.x && ay <= c.y && ay >= b.y){
-							collision = true;
-							if (i - backup_loc.y == 0 && time == veh_list[j].time){
-								// cout << "Collision: " << id << " with " << veh_list[j].id << endl;
+						for (int px = a.x; px <= b.x; px++){
+							for (int py = a.y; py <= d.y; py++){
+								if (px == ax && py == ay){
+									collision = true;
+									// cout << "Shift Collision: " << id << " with " << veh_list[j].id 
+									// 		 << " " <<  ax << " " << px << " " << ay << " " << py << " | " << stopping_dis << endl;
+									break;
+								}
 							}
-							break;
+							if (collision){ break; }
 						}
+						// if (ax <= c.x && ax >= d.x && ay <= c.y && ay >= b.y){
+						// 	collision = true;
+						// 	if (i - backup_loc.y == 0 && time == veh_list[j].time){
+						// 		// cout << "Collision: " << id << " with " << veh_list[j].id << endl;
+						// 	}
+						// 	break;
+						// }
 					}
 					if (collision){
 						break;
@@ -387,13 +393,22 @@ public:
 					for (int l=0; l<y_length; l++){
 						int ax = x - k;
 						int ay = y - l;
-						if (ax <= c.x && ax >= d.x && ay <= c.y && ay >= b.y){
-							collision = true;
-							if (i - backup_loc.y == 0 && time == veh_list[j].time){
-								// cout << "Collision: " << id << endl;
+						for (int px = a.x; px <= b.x; px++){
+							for (int py = a.y; py <= d.y; py++){
+								if (px == ax && py == ay){
+									collision = true;
+									break;
+								}
 							}
-							break;
+							if (collision){ break; }
 						}
+						// if (ax <= c.x && ax >= d.x && ay <= c.y && ay >= b.y){
+						// 	collision = true;
+						// 	if (i - backup_loc.y == 0 && time == veh_list[j].time){
+						// 		// cout << "Collision: " << id << endl;
+						// 	}
+						// 	break;
+						// }
 					}
 					if (collision){
 						break;
@@ -457,6 +472,9 @@ public:
 			}
 			if (c_speed.x < target){
 				c_speed.x = target;
+			}
+			if (c_speed.x < 0){
+				c_speed.x = 0;
 			}
 		}
 		// cout << " Set: " << c_speed.x << endl;
