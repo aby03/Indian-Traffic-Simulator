@@ -214,6 +214,10 @@ public:
 		}
 		// Move according to modified speed
 		location.x = location.x + c_speed.x;
+		if (c_speed.x == 0 && bike_feat != 1){
+			location.y -= c_speed.y;
+			c_speed.y = 0;
+		}
 
 		// Getting stopping distance again
 		stopping_dis = get_stopping_dis(c_speed.x);
