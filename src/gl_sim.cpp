@@ -383,18 +383,12 @@ void update(int value){
                 sim_index++;
                 // Simulation Start
                 if (line == "END"){
-                    //TODO: run till road is clear
                     flag_end = true;
                     glutPostRedisplay(); // Inform GLUT that the display has changed
                     glutTimerFunc(0,update,1);
                     return;
                 }
                 string str1 = "";
-                string str2 = "";
-                if (line.find(" ") != string::npos){
-                    str1 = line.substr(0,line.find(" "));
-                    str2 = line.substr(line.find(" ")+1);
-                }
 
                 if (str1 == "Signal"){
                     if (str2 == "RED"){
@@ -416,15 +410,16 @@ void update(int value){
                     for (int i = 0; i < vlist.size(); i++){
                         vinfo veh = vlist[i];
                         if (veh.type == str1.front()){
+                            Vehicle vehicle1(id_counter, str2,veh.length,veh.width,veh.maxspeed,veh.acc);
                             if (veh.bike_feat == 1){
-                                Vehicle vehicle1(id_counter, str2,veh.length,veh.width,veh.maxspeed,veh.acc, veh.bike_feat);
-                                id_counter++;
-                                vehicle1.type = str1.front();
-                                road.spawn_vehicle(vehicle1);
-                            }else{
-                                Vehicle vehicle1(id_counter, str2,veh.length,veh.width,veh.maxspeed,veh.acc);
-                                id_counter++;
-                                vehicle1.type = str1.front();
+                                vehicle1.bike_feat = 1;
+                            }
+                            id_counter++;
+                            vehicle1.type = str1.front();
+                            if (str3.length() != 0){
+                                road.spawn_vehicle(vehicle1, stoi(str3),stoi(str4));
+                            }
+                            else{
                                 road.spawn_vehicle(vehicle1);
                             }
                             break;
