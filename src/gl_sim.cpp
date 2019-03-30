@@ -107,8 +107,8 @@ void drawCar(int carl, int carw, string color)
     float carZ = 0.1f;
 
     //To create gaps in between adjacent cars
-    carX -= 0.03f;
-    carY -= 0.03f;
+    carX -= 0.01f;
+    carY -= 0.01f;
 
     glPushMatrix();
 
@@ -389,6 +389,27 @@ void update(int value){
                     return;
                 }
                 string str1 = "";
+                string str2 = "";
+                string str3 = "";
+                string str4 = "";
+                // TEST
+
+                string s = line;
+                stringstream ss(s);
+                istream_iterator<string> begin(ss);
+                istream_iterator<string> end;
+                vector<string> vstrings(begin, end);
+                // copy(vstrings.begin(), vstrings.end(), ostream_iterator<string>(cout, "\n"));
+                cout << "V " << vstrings[0] << " V " << vstrings[1] << endl;
+                // TEST
+                if (line.find(" ") != string::npos){
+                    str1 = vstrings[0];
+                    str2 = vstrings[1];
+                    if (vstrings.size() == 4){
+                        str3 = vstrings[2];
+                        str4 = vstrings[3];
+                    }
+                }
 
                 if (str1 == "Signal"){
                     if (str2 == "RED"){
@@ -420,6 +441,13 @@ void update(int value){
                                 road.spawn_vehicle(vehicle1, stoi(str3),stoi(str4));
                             }
                             else{
+                                vehicle1.bike_feat = 1;   
+                            }
+                            id_counter++;
+                            vehicle1.type = str1.front();
+                            if (vstrings.size() == 4){
+                                road.spawn_vehicle(vehicle1, stoi(str3), stoi(str4));
+                            }else{
                                 road.spawn_vehicle(vehicle1);
                             }
                             break;
