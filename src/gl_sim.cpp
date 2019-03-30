@@ -391,9 +391,25 @@ void update(int value){
                 }
                 string str1 = "";
                 string str2 = "";
+                string str3 = "";
+                string str4 = "";
+                // TEST
+
+                string s = line;
+                stringstream ss(s);
+                istream_iterator<string> begin(ss);
+                istream_iterator<string> end;
+                vector<string> vstrings(begin, end);
+                // copy(vstrings.begin(), vstrings.end(), ostream_iterator<string>(cout, "\n"));
+                cout << "V " << vstrings[0] << " V " << vstrings[1] << endl;
+                // TEST
                 if (line.find(" ") != string::npos){
-                    str1 = line.substr(0,line.find(" "));
-                    str2 = line.substr(line.find(" ")+1);
+                    str1 = vstrings[0];
+                    str2 = vstrings[1];
+                    if (vstrings.size() == 4){
+                        str3 = vstrings[2];
+                        str4 = vstrings[3];
+                    }
                 }
 
                 if (str1 == "Signal"){
@@ -416,15 +432,15 @@ void update(int value){
                     for (int i = 0; i < vlist.size(); i++){
                         vinfo veh = vlist[i];
                         if (veh.type == str1.front()){
+                            Vehicle vehicle1(id_counter, str2,veh.length,veh.width,veh.maxspeed,veh.acc);
                             if (veh.bike_feat == 1){
-                                Vehicle vehicle1(id_counter, str2,veh.length,veh.width,veh.maxspeed,veh.acc, veh.bike_feat);
-                                id_counter++;
-                                vehicle1.type = str1.front();
-                                road.spawn_vehicle(vehicle1);
+                                vehicle1.bike_feat = 1;   
+                            }
+                            id_counter++;
+                            vehicle1.type = str1.front();
+                            if (vstrings.size() == 4){
+                                road.spawn_vehicle(vehicle1, stoi(str3), stoi(str4));
                             }else{
-                                Vehicle vehicle1(id_counter, str2,veh.length,veh.width,veh.maxspeed,veh.acc);
-                                id_counter++;
-                                vehicle1.type = str1.front();
                                 road.spawn_vehicle(vehicle1);
                             }
                             break;

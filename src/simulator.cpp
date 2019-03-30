@@ -618,6 +618,12 @@ public:
 		vehicles_list.push_back(veh);
 		// print_cars();
 	}
+	void spawn_vehicle(Vehicle veh, int x, int y){
+		veh.location.x = x;
+		veh.location.y = y;
+		vehicles_list.push_back(veh);
+		// print_cars();
+	}
 
 	bool occupied(int pos, int y_size){
 		for (int i=0; i<vehicles_list.size(); i++){
