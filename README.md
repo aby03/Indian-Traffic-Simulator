@@ -18,12 +18,12 @@ Description of each file in `/src`:
   $ sudo apt-get install build-essential
   $ sudo apt-get make g++ libx11-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxrandr-dev libxext-dev libxcursor-dev libxinerama-dev
   $ sudo apt-get install freeglut3 freeglut3-dev libglew-dev
-  //Last line is important for download. However, if some problem is encountered, the 3rd command will usuall resolve it.
+  //Last line is important for download. However, if some problem is encountered, the 3rd command will usually resolve it.
   ```
   
 ### How to run
 
-- After cloning/downloading the repo, in the main folder,use `make` to compile all the files.
+- After cloning/downloading the repo, in the main folder, use `make` to compile all the files.
 - Inside `/config/config.ini`, create the necessary road, signal and vehicle properties for simulation. More details about the `config.ini` file is given below
 - Run the simulation using `./bin/gl_sim`
 
@@ -37,15 +37,19 @@ The configuration file is designed as follows:-
   1) Road: Road_ID, Road_Length, Road_Width
   2) Signal: Road_Position
   3) Default: Default_MaxSpeed, Default_Acceleration
-  4) Vehicles: Vehicle_Type, Vehicle_Length, Vehicle_Width, Vehicle_MaxSpeed, Vehicle_Acceleration (All the properties should be under one Vehicle_Type only)
-  5) Simulation: Pass *number of passes that will be run*, Signal RED/GREEN, *Vehicle_Type* *Color*, END
+  4) Vehicles: Vehicle_Type, Vehicle_Length, Vehicle_Width, Vehicle_MaxSpeed, Vehicle_Acceleration, Vehicle_Bike_Feature (All the properties should be under one Vehicle_Type only)
+  5) Simulation: 
+    - Pass *number of passes that will be run*
+    - Signal RED/GREEN
+    - *Vehicle_Type* *Color* (OPTIONAL) *X Coord Y Coord* 
+    - END
 - The properties in *italics* need to be replaced by their respective values. The properties under the simulation header, which should be the last header, are **NOT** key, value pairs.
 
 ## Working
 
 To simulate Indian traffic, we have a `run()` function for the road which contains all the cars. This runs all the cars present on the road (as stored in a vector `vehicles_list`). It then runs each of these vehicles by calling the vehicles `run()` function. While runnning every car, the car checks various properties in front of it like stopping distance and takes necessary steps to move at the maximum speed. It is assumed that vehicle uses its full acceleration and deceleration while moving.
 
-Spawning of cars takes place at random. If there is no space for vehicle to spawn, it does not spawn.
+Spawning of cars takes place at random if the spawn coordinates are not given. If there is no space for vehicle to spawn, it does not spawn.
 
 ## Authors
 
