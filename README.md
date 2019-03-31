@@ -1,5 +1,5 @@
 # Indian-Traffic-Simulator
-Discrete Traffic Simulator tailored according to Indian roads. The traffic in India has really different properties, owing to its large population, than other countries. Vehicles are less restricted by rules and change lanes & overtake very often. Owing to lesser space, Indian traffic has the property  to fit perfectly into spaces to fill the roads, unlike in foreign countries where there are plenty of gaps between each vehicle. Cars also try to go at their maximum speed and occasionally break rules. We have tried to reciprocate the same in our simulation. 
+Discrete Traffic Simulator tailored according to Indian roads. The traffic in India has really different properties, owing to its large population, than other countries. Vehicles are less restricted by rules and change lanes & overtake very often. Owing to lesser space, Indian traffic has the property  to fit perfectly into spaces to fill the roads, unlike in foreign countries where there are plenty of gaps between each vehicle. Cars also try to go at their maximum speed and occasionally break rules by overtaking and jumping signals. We have tried to reciprocate the same in our simulation. 
 
 ## Description
 
@@ -39,17 +39,22 @@ The configuration file is designed as follows:-
   3) Default: Default_MaxSpeed, Default_Acceleration
   4) Vehicles: Vehicle_Type, Vehicle_Length, Vehicle_Width, Vehicle_MaxSpeed, Vehicle_Acceleration, Vehicle_Bike_Feature (All the properties should be under one Vehicle_Type only)
   5) Simulation: 
-    - Pass *number of passes that will be run*
+    - Pass *number of passes/seconds to run*
     - Signal RED/GREEN
-    - *Vehicle_Type* *Color* (OPTIONAL) *X Coord Y Coord* 
-    - END
+    - *Vehicle_Type* *Color* [*X Coord Y Coord*]  
+    - END (Compulsory for termination)
 - The properties in *italics* need to be replaced by their respective values. The properties under the simulation header, which should be the last header, are **NOT** key, value pairs.
+- Following Colors are supported - BLACK, GREEN, MAGENTA, RED, BLUE, CYAN, YELLOW (Case-sensitive argument)
 
 ## Working
 
-To simulate Indian traffic, we have a `run()` function for the road which contains all the cars. This runs all the cars present on the road (as stored in a vector `vehicles_list`). It then runs each of these vehicles by calling the vehicles `run()` function. While runnning every car, the car checks various properties in front of it like stopping distance and takes necessary steps to move at the maximum speed. It is assumed that vehicle uses its full acceleration and deceleration while moving.
+To simulate Indian traffic, we have a `run()` function for the road which contains all the cars. This runs all the cars present on the road (as stored in a vector `vehicles_list`). It then runs each of these vehicles by calling the vehicles `run()` function. While runnning every car, the car checks various properties in front of it like stopping distance and takes necessary steps to move at the maximum speed. It is assumed that vehicle uses its full acceleration and deceleration while moving. Some cars also jump the red light with a probability of 0.1. This value can be changed from `simulator.cpp`.
 
 Spawning of cars takes place at random if the spawn coordinates are not given. If there is no space for vehicle to spawn, it does not spawn.
+
+## Examples
+
+Some predefined config files with their outputs recorded are present inside `./videos/`.
 
 ## Authors
 

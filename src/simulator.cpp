@@ -74,7 +74,7 @@ public:
 	// Indian
 	int jump_signal = -1;
 	bool jump_attempt = false;
-	float jump_chance = 0.2;
+	float jump_chance = 0.1;
 	int bike_feat = 0;
 
 	Vehicle(){

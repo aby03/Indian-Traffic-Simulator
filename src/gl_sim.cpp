@@ -524,7 +524,7 @@ int main(int argc, char **argv)
     cout << "Starting Simulation" << endl;
     cout << " ------------------ " << endl;
     string line;
-    ifstream myfile ("./config/config.ini");
+    ifstream myfile (filename);
     string curr = ""; //Current header operation
     int def_speed=1;
     int def_acc=1;
