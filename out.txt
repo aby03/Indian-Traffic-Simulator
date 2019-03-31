@@ -1,0 +1,449 @@
+Sim commands: 29
+TIME: 1
+Signal RED
+Truck BLUE
+----------T------------------------
+          |                        
+          |                        
+          |                        
+T         |                        
+T         |                        
+----------T------------------------		Global Time = 1
+
+TIME: 2
+Car GREEN
+----------T------------------------
+          |                        
+CC        |                        
+CC        |                        
+TTT       |                        
+TTT       |                        
+----------T------------------------		Global Time = 2
+
+TIME: 3
+bike BLUE
+----------T------------------------
+bb        |                        
+   CC     |                        
+   CC     |                        
+TTTTT     |                        
+TTTTT     |                        
+----------T------------------------		Global Time = 3
+
+TIME: 4
+bike GREEN
+----------T------------------------
+    bb    |                        
+      CC  |                        
+bb    CC  |                        
+  TTTTT   |                        
+  TTTTT   |                        
+----------T------------------------		Global Time = 4
+
+TIME: 5
+Bus BLUE
+----------T------------------------
+       bb |                        
+        CC|                        
+    bb  CC|                        
+B   TTTTT |                        
+B   TTTTT |                        
+----------T------------------------		Global Time = 5
+
+TIME: 6
+Pass 4
+----------T------------------------
+        bb|                        
+        CC|                        
+      bbCC|                        
+BBB  TTTTT|                        
+BBB  TTTTT|                        
+----------T------------------------		Global Time = 6
+
+TIME: 7
+----------T------------------------
+        bb|                        
+        CC|                        
+      bbCC|                        
+ BBB TTTTT|                        
+ BBB TTTTT|                        
+----------T------------------------		Global Time = 7
+
+TIME: 8
+----------T------------------------
+        bb|                        
+        CC|                        
+  BBB bbCC|                        
+  BBBTTTTT|                        
+     TTTTT|                        
+----------T------------------------		Global Time = 8
+
+TIME: 9
+----------T------------------------
+        bb|                        
+        CC|                        
+  BBB bbCC|                        
+  BBBTTTTT|                        
+     TTTTT|                        
+----------T------------------------		Global Time = 9
+
+TIME: 10
+racer GREEN
+----------T------------------------
+rrr     bb|                        
+        CC|                        
+  BBB bbCC|                        
+  BBBTTTTT|                        
+     TTTTT|                        
+----------T------------------------		Global Time = 10
+
+TIME: 11
+Car GREEN
+----------T------------------------
+    rrr bb|                        
+        CC|                        
+  BBB bbCC|                        
+CCBBBTTTTT|                        
+CC   TTTTT|                        
+----------T------------------------		Global Time = 11
+
+TIME: 12
+bike BLUE
+----------T------------------------
+     rrrbb|                        
+bb      CC|                        
+  BBB bbCC|                        
+CCBBBTTTTT|                        
+CC   TTTTT|                        
+----------T------------------------		Global Time = 12
+
+TIME: 13
+Car GREEN
+No Space to Spawn Vehicle
+----------T------------------------
+     rrrbb|                        
+    bb  CC|                        
+  BBB bbCC|                        
+CCBBBTTTTT|                        
+CC   TTTTT|                        
+----------T------------------------		Global Time = 13
+
+TIME: 14
+bike BLUE
+----------T------------------------
+     rrrbb|                        
+bb    bbCC|                        
+  BBB bbCC|                        
+CCBBBTTTTT|                        
+CC   TTTTT|                        
+----------T------------------------		Global Time = 14
+
+TIME: 15
+Pass 3
+----------T------------------------
+     rrrbb|                        
+   bb bbCC|                        
+  BBB bbCC|                        
+CCBBBTTTTT|                        
+CC   TTTTT|                        
+----------T------------------------		Global Time = 15
+
+TIME: 16
+----------T------------------------
+     rrrbb|                        
+    bbbbCC|                        
+  BBB bbCC|                        
+CCBBBTTTTT|                        
+CC   TTTTT|                        
+----------T------------------------		Global Time = 16
+
+TIME: 17
+----------T------------------------
+     rrrbb|                        
+    bbbbCC|                        
+  BBB bbCC|                        
+CCBBBTTTTT|                        
+CC   TTTTT|                        
+----------T------------------------		Global Time = 17
+
+TIME: 18
+Car GREEN
+----------T------------------------
+     rrrbb|                        
+CC  bbbbCC|                        
+CCBBB bbCC|                        
+CCBBBTTTTT|                        
+CC   TTTTT|                        
+----------T------------------------		Global Time = 18
+
+TIME: 19
+bike RED
+----------T------------------------
+bb   rrrbb|                        
+CC  bbbbCC|                        
+CCBBB bbCC|                        
+CCBBBTTTTT|                        
+CC   TTTTT|                        
+----------T------------------------		Global Time = 19
+
+TIME: 20
+Truck GREEN
+No Space to Spawn Vehicle
+----------T------------------------
+  bb rrrbb|                        
+CC  bbbbCC|                        
+CCBBB bbCC|                        
+CCBBBTTTTT|                        
+CC   TTTTT|                        
+----------T------------------------		Global Time = 20
+
+TIME: 21
+Bus BLUE
+No Space to Spawn Vehicle
+----------T------------------------
+   bbrrrbb|                        
+CC  bbbbCC|                        
+CCBBB bbCC|                        
+CCBBBTTTTT|                        
+CC   TTTTT|                        
+----------T------------------------		Global Time = 21
+
+TIME: 22
+Signal GREEN
+racer BLUE
+----------T------------------------
+rrr  bbrrrbb                       
+ CC   bbbbCC                       
+ CCBBB  bbCC                       
+ CCBBBTTTTT                        
+ CC   TTTTT                        
+----------T------------------------		Global Time = 22
+
+TIME: 23
+Signal RED
+Car BLUE
+No Space to Spawn Vehicle
+----------T------------------------
+  rrrbbrrr|   bb                   
+  CC  bbbb|  CC                    
+  CCBBB bb|  CC                    
+  CCBBB TTTTT                      
+  CC    TTTTT                      
+----------T------------------------		Global Time = 23
+
+TIME: 24
+Bus GREEN
+----------T------------------------
+  rrrbbrrr|       bb               
+    CCbbbb|     CC                 
+    CC  bb|     CC                 
+B   CCBBB TTTTT                    
+B   CCBBB TTTTT                    
+----------T------------------------		Global Time = 24
+
+TIME: 25
+Pass 3
+----------T------------------------
+  rrrbbrrr|           bb           
+    CCbbbb|        CC              
+    CC  bb|        CC              
+BBB  CCBBB| TTTTT                  
+BBB  CCBBB| TTTTT                  
+----------T------------------------		Global Time = 25
+
+TIME: 26
+----------T------------------------
+  rrrbbrrr|               bb       
+    CCbbbb|           CC           
+    CC  bb|           CC           
+ BBB CCBBB|   TTTTT                
+ BBB CCBBB|   TTTTT                
+----------T------------------------		Global Time = 26
+
+TIME: 27
+----------T------------------------
+  rrrbbrrr|                   bb   
+    CCbbbb|              CC        
+    CC  bb|              CC        
+  BBBCCBBB|     TTTTT              
+  BBBCCBBB|     TTTTT              
+----------T------------------------		Global Time = 27
+
+TIME: 28
+Car GREEN
+----------T------------------------
+  rrrbbrrr|                       b
+    CCbbbb|                 CC     
+CC  CC  bb|                 CC     
+CCBBBCCBBB|       TTTTT            
+  BBBCCBBB|       TTTTT            
+----------T------------------------		Global Time = 28
+
+TIME: 29
+bike RED
+----------T------------------------
+  rrrbbrrr|                        
+bb  CCbbbb|                    CC  
+CC  CC  bb|                    CC  
+CCBBBCCBBB|         TTTTT          
+  BBBCCBBB|         TTTTT          
+----------T------------------------		Global Time = 29
+
+TIME: 30
+Truck GREEN
+No Space to Spawn Vehicle
+----------T------------------------
+  rrrbbrrr|                        
+  bbCCbbbb|                       C
+CC  CC  bb|                       C
+CCBBBCCBBB|           TTTTT        
+  BBBCCBBB|           TTTTT        
+----------T------------------------		Global Time = 30
+
+TIME: 31
+Bus BLUE
+----------T------------------------
+B rrrbbrrr|                        
+B bbCCbbbb|                        
+CC  CC  bb|                        
+CCBBBCCBBB|             TTTTT      
+  BBBCCBBB|             TTTTT      
+----------T------------------------		Global Time = 31
+
+TIME: 32
+Signal GREEN
+END
+----------T------------------------
+BBB rrrbb rrr                      
+BBB bbCCbbbb                       
+ CC   CC  bb                       
+ CCBBBCCBBB               TTTTT    
+   BBBCCBBB               TTTTT    
+----------T------------------------		Global Time = 32
+
+TIME: 33
+----------T------------------------
+  BBB  rrr bb  rrr                 
+  BBB bbCC bb bb                   
+  CC    CC    bb                   
+  CCBBB CCBBB               TTTTT  
+    BBB CCBBB               TTTTT  
+----------T------------------------		Global Time = 33
+
+TIME: 34
+----------T------------------------
+    BBB    rrr bb   rrr            
+    BBB bb CC bb  bb               
+    CC     CC     bb               
+    CCBBB CC BBB              TTTTT
+      BBB CC BBB              TTTTT
+----------T------------------------		Global Time = 34
+
+TIME: 35
+----------T------------------------
+      BBB      rrr bb    rrr       
+      BBB  bb CC  bb  bb           
+      CC      CC      bb           
+      CCBBB  CC BBB             TTT
+        BBB  CC BBB             TTT
+----------T------------------------		Global Time = 35
+
+TIME: 36
+----------T------------------------
+        BBB        rrr bb     rrr  
+        BBB   bb CC   bb  bb       
+        CC       CC       bb       
+        CCBBB   CC BBB            T
+          BBB   CC BBB            T
+----------T------------------------		Global Time = 36
+
+TIME: 37
+----------T------------------------
+           BBB         rrr bb      
+           BBB   bb CC    bb  bb   
+          CC        CC        bb   
+          CC BBB   CC BBB          
+             BBB   CC BBB          
+----------T------------------------		Global Time = 37
+
+TIME: 38
+----------T------------------------
+              BBB          rrr bb  
+              BBB   bb CC     bb  b
+             CC        CC         b
+             CC BBB   CC BBB       
+                BBB   CC BBB       
+----------T------------------------		Global Time = 38
+
+TIME: 39
+----------T------------------------
+                 BBB           rrr 
+                 BBB   bb CC      b
+                CC        CC       
+                CC BBB   CC BBB    
+                   BBB   CC BBB    
+----------T------------------------		Global Time = 39
+
+TIME: 40
+----------T------------------------
+                    BBB            
+                    BBB   bb CC    
+                   CC        CC    
+                   CC BBB   CC BBB 
+                      BBB   CC BBB 
+----------T------------------------		Global Time = 40
+
+TIME: 41
+----------T------------------------
+                       BBB         
+                       BBB   bb CC 
+                      CC        CC 
+                      CC BBB   CC B
+                         BBB   CC B
+----------T------------------------		Global Time = 41
+
+TIME: 42
+----------T------------------------
+                          BBB      
+                          BBB   bb 
+                         CC        
+                         CC BBB   C
+                            BBB   C
+----------T------------------------		Global Time = 42
+
+TIME: 43
+----------T------------------------
+                             BBB   
+                             BBB   
+                            CC     
+                            CC BBB 
+                               BBB 
+----------T------------------------		Global Time = 43
+
+TIME: 44
+----------T------------------------
+                                BBB
+                                BBB
+                               CC  
+                               CC B
+                                  B
+----------T------------------------		Global Time = 44
+
+TIME: 45
+----------T------------------------
+                                   
+                                   
+                                  C
+                                  C
+                                   
+----------T------------------------		Global Time = 45
+
+TIME: 46
+----------T------------------------
+                                   
+                                   
+                                   
+                                   
+                                   
+----------T------------------------		Global Time = 46
+
