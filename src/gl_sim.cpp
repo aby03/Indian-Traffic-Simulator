@@ -42,6 +42,8 @@ float angle1=0.0;
 float angle2=0.0;
 // Camera coordinates
 float x=0.0f, y=0.0f, z=5.0f;
+// Camera point looking at
+float ox = 0.0f, oy =0.0f, oz = 0.0f;
 // actual vector representing the camera's direction
 float lx=0.0f, ly=0.0f, lz=-1.0f;
 // Spherical position of the camera
@@ -102,6 +104,18 @@ void drawCar(int carl, int carw, string color)
         top_color_r = 0;
         top_color_g = 0;
         top_color_b = 1;
+    }else if (color == "CYAN"){
+        top_color_r = 0;
+        top_color_g = 1;
+        top_color_b = 1;
+    }else if (color == "MAGENTA"){
+        top_color_r = 1;
+        top_color_g = 0;
+        top_color_b = 1;
+    }else if (color == "YELLOW"){
+        top_color_r = 1;
+        top_color_g = 1;
+        top_color_b = 0;
     }
     float carX = carl*ux/2.0;
     float carY = carw*uy/2.0;
@@ -120,7 +134,7 @@ void drawCar(int carl, int carw, string color)
 
     //bottom
     glBegin(GL_POLYGON);
-    glColor3f(0.0f, 0.0f, 1.0f);
+    glColor3f(0.0f+top_color_r, 0.0f+top_color_g, 0.0f+top_color_b);
     glVertex3f(carX, -carY, 0);
     glVertex3f(carX, carY, 0);
     glVertex3f(-carX, carY, 0);
@@ -129,7 +143,7 @@ void drawCar(int carl, int carw, string color)
 
     //side
     glBegin(GL_POLYGON);
-    glColor4f(1.0, 0.0f, 0.0f, 0.0f);
+    glColor3f(0.0f+top_color_r, 0.0f+top_color_g, 0.0f+top_color_b);
     glVertex3f(carX, -carY, 0);
     glVertex3f(carX, carY, 0);
     glVertex3f(carX, carY, carZ);
@@ -137,7 +151,7 @@ void drawCar(int carl, int carw, string color)
     glEnd();
 
     glBegin(GL_POLYGON);
-    glColor4f(1.0, 0.0f, 0.0f, 0.0f);
+    glColor3f(0.0f+top_color_r, 0.0f+top_color_g, 0.0f+top_color_b);
     glVertex3f(-carX, carY, 0);
     glVertex3f(carX, carY, 0);
     glVertex3f(carX, carY, carZ);
@@ -145,7 +159,7 @@ void drawCar(int carl, int carw, string color)
     glEnd();
 
     glBegin(GL_POLYGON);
-    glColor4f(1.0, 0.0f, 0.0f, 0.0f);
+    glColor3f(0.0f+top_color_r, 0.0f+top_color_g, 0.0f+top_color_b);
     glVertex3f(-carX, carY, 0);
     glVertex3f(-carX, -carY, 0);
     glVertex3f(-carX, -carY, carZ);
@@ -153,7 +167,7 @@ void drawCar(int carl, int carw, string color)
     glEnd();
 
     glBegin(GL_POLYGON);
-    glColor4f(1.0, 0.0f, 0.0f, 0.0f);
+    glColor3f(0.0f+top_color_r, 0.0f+top_color_g, 0.0f+top_color_b);
     glVertex3f(carX, -carY, 0);
     glVertex3f(-carX, -carY, 0);
     glVertex3f(-carX, -carY, carZ);
@@ -198,6 +212,8 @@ void drawCar(int carl, int carw, string color)
     glVertex3f(carX, carY, carZ);
     glVertex3f(carX, -carY, carZ);
     glEnd();
+
+    glPopMatrix();
 }
 
 void renderScene(){
@@ -209,7 +225,7 @@ void renderScene(){
     glLoadIdentity();
 
     gluLookAt(  x, y, z,
-               0.0f, 0.0f,  0.0f,
+               ox, oy,  oz,
                0.0f, 1.0f,  0.0f);
 
     // glTranslatef(0.0, 0.0, -5.0);
@@ -222,11 +238,6 @@ void renderScene(){
     // GLfloat lightPos0[] = {4.0, 0.0, 8.0, 1.0};
     // glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
     // glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
-
-
-    // Rotate when user changes rX and rY
-    // glRotatef( rX, 1.0, 0.0, 0.0 );
-    // glRotatef( rY, 0.0, 1.0, 0.0 );
 
     float rl = roadLength*ux/2;
     float rw = roadWidth*uy/2;
@@ -323,10 +334,10 @@ void processSpecialKeys(int key, int xx, int yy) {
 
     switch (key) {
         case GLUT_KEY_LEFT :
-            angle1 -= 0.05f;
+            ox -= 0.05f;
             break; 
         case GLUT_KEY_RIGHT :
-            angle1 += 0.05f;
+            ox += 0.05f;
             break;
         case GLUT_KEY_UP :
             angle2 += 0.05f;
@@ -343,7 +354,7 @@ void processSpecialKeys(int key, int xx, int yy) {
 
     }
 
-    x = r*cos(angle2)*sin(angle1);
+    x = ox + r*cos(angle2)*sin(angle1);
     z = r*cos(angle2)*cos(angle1);
     y = r*sin(angle2);
 
