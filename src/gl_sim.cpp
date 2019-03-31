@@ -84,6 +84,7 @@ string retVal(string& str){
 }
 
 // ------------ OpenGL Functions --------------------
+// void drawWheel(int posx, int posy,)
 void drawCar(int carl, int carw, string color)
 {
     float top_color_r = 0;
@@ -104,11 +105,11 @@ void drawCar(int carl, int carw, string color)
     }
     float carX = carl*ux/2.0;
     float carY = carw*uy/2.0;
-    float carZ = 0.1f;
+    float carZ = 2*uz;
 
     //To create gaps in between adjacent cars
-    carX -= 0.01f;
-    carY -= 0.01f;
+    carX -= 0.3f*ux;
+    carY -= 0.3f*uy;
 
     glPushMatrix();
 
@@ -197,12 +198,6 @@ void drawCar(int carl, int carw, string color)
     glVertex3f(carX, carY, carZ);
     glVertex3f(carX, -carY, carZ);
     glEnd();
-    //
-
-    //Wheel
-    
-
-    glPopMatrix();
 }
 
 void renderScene(){
@@ -283,7 +278,7 @@ void renderScene(){
     // Draw Vehicles
     for (int i=0; i<road.vehicles_list.size(); i++){
         glPushMatrix();
-        glTranslatef(road.vehicles_list[i].location.x*ux, road.vehicles_list[i].location.y*-uy, 0);
+        glTranslatef(road.vehicles_list[i].location.x*ux, road.vehicles_list[i].location.y*-uy, 0.0f);
         drawCar(road.vehicles_list[i].size.x, road.vehicles_list[i].size.y, road.vehicles_list[i].color);
         glPopMatrix();
     }
@@ -437,20 +432,12 @@ void update(int value){
                             }
                             id_counter++;
                             vehicle1.type = str1.front();
-                            if (str3.length() != 0){
-                                road.spawn_vehicle(vehicle1, stoi(str3),stoi(str4));
-                            }
-                            else{
-                                vehicle1.bike_feat = 1;   
-                            }
-                            id_counter++;
-                            vehicle1.type = str1.front();
                             if (vstrings.size() == 4){
                                 road.spawn_vehicle(vehicle1, stoi(str3), stoi(str4));
                             }else{
                                 road.spawn_vehicle(vehicle1);
                             }
-                            break;
+                            break;  
                         }
                     }
                     road.run();

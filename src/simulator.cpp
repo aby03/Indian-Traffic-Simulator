@@ -621,8 +621,75 @@ public:
 	void spawn_vehicle(Vehicle veh, int x, int y){
 		veh.location.x = x;
 		veh.location.y = y;
-		vehicles_list.push_back(veh);
+		if (check_overlap(veh)){
+			cout << "No space to Spawn Vehicle (Overlapping)" << endl;
+		}
+		else{
+			vehicles_list.push_back(veh);
+		}
 		// print_cars();
+	}
+
+	//Returns true if vehicle will overlap with another vehicle.
+	bool check_overlap(Vehicle veh){
+		int x = veh.location.x;
+		int y = veh.location.y;
+		int m = veh.size.x;
+		int n = veh.size.y;
+		for (int i = 0; i < vehicles_list.size(); i++){
+			Vehicle other_v = vehicles_list[i];
+			int p = other_v.size.x;
+			int q = other_v.size.y;
+
+			//Right front
+			int rf1 = other_v.location.x;
+			int rf2 = other_v.location.y;
+			if (rf1 <= x && rf2 <= y && rf1 >= x - m && rf2 >= y - n){
+				return true;
+			}
+
+			//Right back
+			int rb1 = other_v.location.x-p;
+			int rb2 = other_v.location.y;
+			if (rb1 <= x && rb2 <= y && rb1 >= x - m && rb2 >= y - n){
+				return true;
+			}
+
+			//Left front
+			int lf1 = other_v.location.x;
+			int lf2 = other_v.location.y-q;
+			if (lf1 <= x && lf2 <= y && lf1 >= x - m && lf2 >= y - n){
+				return true;
+			}
+
+			//Left back
+			int lb1 = other_v.location.x-p;
+			int lb2 = other_v.location.y-q;
+			if (lb1 <= x && lb2 <= y && lb1 >= x - m && lb2 >= y - n){
+				return true;
+			}
+
+			//Right front
+			if (x <= rf1 && y <= rf2 && x >= rf1 - p && y >= rf2 - q){
+				return true;
+			}
+
+			//Right back
+			if (x-m <= rf1 && y <= rf2 && x-m >= rf1 - p && y >= rf2 - q){
+				return true;
+			}
+
+			//Left front
+			if (x <= rf1 && y-n <= rf2 && x >= rf1 - p && y-n >= rf2 - q){
+				return true;
+			}
+
+			//Left back
+			if (x-m <= rf1 && y-n <= rf2 && x-m >= rf1 - p && y-n >= rf2 - q){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	bool occupied(int pos, int y_size){
