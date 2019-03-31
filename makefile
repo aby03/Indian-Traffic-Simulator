@@ -9,7 +9,7 @@ SDIR = ./src
 # _DEPS = imgOp.h
 # DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = readconfig.o
+_OBJ = gl_sim.o simulator.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 all: $(EDIR)/gl_sim 
