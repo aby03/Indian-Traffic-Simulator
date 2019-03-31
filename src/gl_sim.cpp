@@ -13,6 +13,7 @@
 
 using namespace std;
 
+
 // ------------ Config File Variables --------------------
 struct vinfo{
     char type;
@@ -31,6 +32,8 @@ vector<string> sim_cmd;
 int sim_index = 0;
 int pass_count = 0;
 bool flag_end = false;
+
+string filename;
 // ------------ OpenGL Variables --------------------
 int time_step = 500;
 //Units used
@@ -119,7 +122,7 @@ void drawCar(int carl, int carw, string color)
     }
     float carX = carl*ux/2.0;
     float carY = carw*uy/2.0;
-    float carZ = 2*uz;
+    float carZ = 1.25*uz;
 
     //To create gaps in between adjacent cars
     carX -= 0.3f*ux;
@@ -183,32 +186,66 @@ void drawCar(int carl, int carw, string color)
     glVertex3f(-carX, -carY, carZ);
     glEnd();
 
+    //Roof lines
+    carX += 0.001f;
+    carY += 0.001f;
+    glPushMatrix();
+    glTranslatef(0.0f,0.0f,carZ);
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glVertex2f(carX, -carY);
+    glVertex2f(carX, carY);
+    glEnd();
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glVertex2f(carX, -carY);
+    glVertex2f(-carX, -carY);
+    glEnd();
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glVertex2f(-carX, -carY);
+    glVertex2f(-carX, carY);
+    glEnd();
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glVertex2f(-carX, carY);
+    glVertex2f(carX, carY);
+    glEnd();
+
+    glPopMatrix();
+
+    carX -= 0.001f;
+    carY -= 0.001f;
 
     //Square Pyramid Top
     glBegin(GL_TRIANGLES);
     glColor3f(0.0f+top_color_r, 0.0f+top_color_g, 0.0f+top_color_b);
-    glVertex3f(0, 0, 2*carZ);
+    glVertex3f(0, 0, 1.5*carZ);
     glVertex3f(carX, carY, carZ);
     glVertex3f(-carX, carY, carZ);
     glEnd();
 
     glBegin(GL_TRIANGLES);
     glColor3f(0.0f+top_color_r, 0.0f+top_color_g, 0.0f+top_color_b);
-    glVertex3f(0, 0, 2*carZ);
+    glVertex3f(0, 0, 1.5*carZ);
     glVertex3f(-carX, -carY, carZ);
     glVertex3f(-carX, carY, carZ);
     glEnd();
 
     glBegin(GL_TRIANGLES);
     glColor3f(0.0f+top_color_r, 0.0f+top_color_g, 0.0f+top_color_b);
-    glVertex3f(0, 0, 2*carZ);
+    glVertex3f(0, 0, 1.5*carZ);
     glVertex3f(carX, -carY, carZ);
     glVertex3f(-carX, -carY, carZ);
     glEnd();
 
     glBegin(GL_TRIANGLES);
     glColor3f(0.0f+top_color_r, 0.0f+top_color_g, 0.0f+top_color_b);
-    glVertex3f(0, 0, 2*carZ);
+    glVertex3f(0, 0, 1.5*carZ);
     glVertex3f(carX, carY, carZ);
     glVertex3f(carX, -carY, carZ);
     glEnd();
@@ -398,16 +435,13 @@ void update(int value){
                 string str2 = "";
                 string str3 = "";
                 string str4 = "";
-                // TEST
 
                 string s = line;
                 stringstream ss(s);
                 istream_iterator<string> begin(ss);
                 istream_iterator<string> end;
                 vector<string> vstrings(begin, end);
-                // copy(vstrings.begin(), vstrings.end(), ostream_iterator<string>(cout, "\n"));
-                cout << "V " << vstrings[0] << " V " << vstrings[1] << endl;
-                // TEST
+                
                 if (line.find(" ") != string::npos){
                     str1 = vstrings[0];
                     str2 = vstrings[1];
@@ -469,6 +503,26 @@ void update(int value){
 int main(int argc, char **argv)
 {
     // ----------------- Config File Reading ----------------- 
+    cout << " ------------------ " << endl << "Starting Indian Traffic Simulator " << endl << " ------------------ " << endl;
+    filename = "./config/config.ini";
+    if (argc == 2){
+        string file = "./config/" + string(argv[1]);
+        ifstream test(file);
+        if (test.is_open()){
+            cout << "Config File: " << file << endl;
+            cout << " ------------------ " << endl << endl;
+            test.close();
+            filename = file;
+        }else{
+            cout << "Default Config File: " << filename << endl;
+            cout << " ------------------ " << endl << endl;
+        }
+    }else{
+        cout << "Default Config File: " << filename << endl;
+        cout << " ------------------ " << endl << endl;
+    }
+    cout << "Starting Simulation" << endl;
+    cout << " ------------------ " << endl;
     string line;
     ifstream myfile ("./config/config.ini");
     string curr = ""; //Current header operation
