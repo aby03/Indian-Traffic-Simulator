@@ -316,7 +316,7 @@ void processNormalKeys(unsigned char key, int x, int y) {
     if (key == 27)
         exit(0);
 }
-
+ 
 void processSpecialKeys(int key, int xx, int yy) {
 
     float fraction = 0.1f;
@@ -324,7 +324,7 @@ void processSpecialKeys(int key, int xx, int yy) {
     switch (key) {
         case GLUT_KEY_LEFT :
             angle1 -= 0.05f;
-            break;
+            break; 
         case GLUT_KEY_RIGHT :
             angle1 += 0.05f;
             break;
@@ -363,7 +363,7 @@ void update(int value){
         }else{
             glutPostRedisplay(); // Inform GLUT that the display has changed
             glutTimerFunc(time_step,update,0);
-        }
+        } 
     }else{
         if (pass_count > 0){
             road.run();
@@ -440,7 +440,7 @@ void update(int value){
                             break;  
                         }
                     }
-                    road.run();
+                    if (vstrings.size() != 4){road.run();}
                     road.display();
                     glutPostRedisplay(); // Inform GLUT that the display has changed
                     glutTimerFunc(time_step,update,0);//Call update after each 25 millisecond

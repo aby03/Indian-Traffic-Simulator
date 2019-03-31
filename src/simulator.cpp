@@ -214,6 +214,10 @@ public:
 		}
 		// Move according to modified speed
 		location.x = location.x + c_speed.x;
+		if (c_speed.x == 0 && bike_feat != 1){
+			location.y -= c_speed.y;
+			c_speed.y = 0;
+		}
 
 		// Getting stopping distance again
 		stopping_dis = get_stopping_dis(c_speed.x);
@@ -318,7 +322,7 @@ public:
 								if (px == ax && py == ay){
 									collision = true;
 									// cout << "Shift Collision: " << id << " with " << veh_list[j].id 
-									// 		 << " " <<  ax << " " << px << " " << ay << " " << py << " | " << stopping_dis << endl;
+										 // << " " <<  ax << " " << px << " " << ay << " " << py << " | " << stopping_dis << endl;
 									break;
 								}
 							}
@@ -371,11 +375,13 @@ public:
 		}
 		location = backup_loc;
 		// Overtake from left
+		collision = false;
 		for (int i=location.y; i>=size.y-1; i--){
 			a.y = i-size.y+1;
 			b.y = i-size.y+1;
 			c.y = i;
 			d.y = i;
+			// cout << id << " checking shift: " << i-backup_loc.y << endl;
 			for (int j=0; j<veh_list.size(); j++){
 				if (id == veh_list[j].id){
 					continue;
@@ -397,6 +403,8 @@ public:
 							for (int py = a.y; py <= d.y; py++){
 								if (px == ax && py == ay){
 									collision = true;
+									// cout << "Shift Collision: " << id << " with " << veh_list[j].id 
+									// 	 << " " <<  ax << " " << px << " " << ay << " " << py << " | " << stopping_dis << endl;
 									break;
 								}
 							}
@@ -634,12 +642,12 @@ public:
 	bool check_overlap(Vehicle veh){
 		int x = veh.location.x;
 		int y = veh.location.y;
-		int m = veh.size.x;
-		int n = veh.size.y;
+		int m = veh.size.x-1;
+		int n = veh.size.y-1;
 		for (int i = 0; i < vehicles_list.size(); i++){
 			Vehicle other_v = vehicles_list[i];
-			int p = other_v.size.x;
-			int q = other_v.size.y;
+			int p = other_v.size.x-1;
+			int q = other_v.size.y-1;
 
 			//Right front
 			int rf1 = other_v.location.x;
